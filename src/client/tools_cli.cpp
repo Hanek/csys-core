@@ -106,10 +106,10 @@ diModule::widget::widget(diModule* pDev)
   gint usize                   = pWin->usize + 1;
   gdouble alignVal         = 0.5;
   gint col1                      = 8;
-  gint row1                     =  8;
-  gint row2                     =  30;
-  gint row3                     =  50;
-  gint row4                     =  72;
+  gint row1                     =  0;
+  gint row2                     =  22;
+  gint row3                     =  38;
+  gint row4                     =  60;
   
   frame = gtk_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (pWin->systemVbox), frame, FALSE, FALSE, 0);
@@ -254,10 +254,10 @@ doModule::widget::widget(doModule* pDev)
   gint usize                   = pWin->usize + 1;
   gdouble alignVal         = 0.5;
   gint col1                      = 8;
-  gint row1                     =  8;
-  gint row2                     =  30;
-  gint row3                     =  50;
-  gint row4                     =  72;
+  gint row1                     =  0;
+  gint row2                     =  22;
+  gint row3                     =  38;
+  gint row4                     =  60;
   
   frame = gtk_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (pWin->systemVbox), frame, FALSE, FALSE, 0);

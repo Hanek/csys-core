@@ -26,7 +26,7 @@ int main()
   device::bufferLen = bufferLen;
   device::os << std::fixed;
   device::is << std::fixed;
-  io sys_io(2, 3, 4, 5);
+  io sys_io;
 
   
   cloop loop;

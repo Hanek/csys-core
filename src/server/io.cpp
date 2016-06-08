@@ -24,6 +24,7 @@
 #include "commac.h"
 
 using namespace csys;
+using namespace std;
 
 size_t io::DI(0);
 size_t io::DO(0);
@@ -31,27 +32,24 @@ size_t io::DO(0);
 logger& io::ioLog = logger::instance();
 
 
-io::io(int dI, int dO, int aI, int aO)
+io::io()
 {
-  slot_di = dI; 
-  slot_do = dO;
-  slot_ai = aI;
-  slot_ao = aO; 
-  
-//   I8017_Init(aI);  
-//   I8024_Initial(aO);
-//   if(0 != Open_SlotAll())
-//   {
-//     std::cout << "io::io()::Open_SlotAll failed" << std::endl;
-//     exit(1);
-//   }
-
+  /* initialize hardware here  */  
+  if(!do_card_init() ||
+      !di_card_init() ||
+      !ai_card_init() ||
+      !ao_card_init())
+  {
+    string error("failed to initialize hardware...");
+    ioLog.getstream(logLevel::DEFAULT, logType::IO)
+    <<  __func__  << ": " << error << endl;
+    cout << error << endl;  
+    exit(1); 
+  }
 } 
  
 io::~io()
-{ 
-//   Close_SlotAll(); 
-}
+{ close_all(); }
   
    
  

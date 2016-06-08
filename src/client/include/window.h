@@ -63,20 +63,20 @@ public:
   GtkWidget *systemVbox;
   GtkWidget *systemLabel;
   
-  GtkWidget *gasesScrolledWindow;
-  GtkWidget *gasesViewport;
-  GtkWidget *gasesVbox;
-  GtkWidget *gasesLabel;
+  GtkWidget *analogScrolledWindow;
+  GtkWidget *analogViewport;
+  GtkWidget *analogVbox;
+  GtkWidget *analogLabel;
  
-  GtkWidget *valvesScrolledWindow;
-  GtkWidget *valvesViewport;
-  GtkWidget *valvesVbox;
-  GtkWidget *valvesLabel;
+  GtkWidget *discreteScrolledWindow;
+  GtkWidget *discreteViewport;
+  GtkWidget *discreteVbox;
+  GtkWidget *discreteLabel;
   
-  GtkWidget *pumpsScrolledWindow;
-  GtkWidget *pumpsViewport;
-  GtkWidget *pumpsVbox;
-  GtkWidget *pumpsLabel;
+  GtkWidget *serialScrolledWindow;
+  GtkWidget *serialViewport;
+  GtkWidget *serialVbox;
+  GtkWidget *serialLabel;
 
   GtkWidget *statsLabel;
   

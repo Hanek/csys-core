@@ -317,7 +317,7 @@ analogDevice::widget::widget(analogDevice* pDev)
   gint im_col = pWin->controlsWidth - rrgImWidth - 26;
   
   frame = gtk_frame_new (NULL);
-  gtk_box_pack_start (GTK_BOX (pWin->gasesVbox), frame, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (pWin->analogVbox), frame, FALSE, FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (frame), 0);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_OUT);
   gtk_container_set_border_width (GTK_CONTAINER (frame), 2);

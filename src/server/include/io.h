@@ -76,9 +76,17 @@ private:
   aiport              aip[8];
   aoport             aop[8];
   
+private:
+  /*  stub methods, must be provided by hw vendor  */
+  bool do_card_init() { return true; }
+  bool di_card_init() { return true; }
+  bool ai_card_init() { return true; }
+  bool ao_card_init() { return true; }
+  void close_all() {}
+  
 public:
   static logger& ioLog;
-  io(int dI, int dO, int aI, int aO);
+  io();
   ~io();
   void getDI() const;
   void setDO();

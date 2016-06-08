@@ -149,50 +149,50 @@ window::window()
   systemLabel = gtk_label_new ("System");
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 0), systemLabel);
 
-  /*   Gases Tab   */
-  gasesScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (controlsNbook), gasesScrolledWindow);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (gasesScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  /*   Analog Devices Tab   */
+  analogScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (controlsNbook), analogScrolledWindow);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (analogScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   
-  gasesViewport = gtk_viewport_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (gasesScrolledWindow), gasesViewport);
-  gtk_viewport_set_shadow_type (GTK_VIEWPORT (gasesViewport), GTK_SHADOW_NONE);
+  analogViewport = gtk_viewport_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (analogScrolledWindow), analogViewport);
+  gtk_viewport_set_shadow_type (GTK_VIEWPORT (analogViewport), GTK_SHADOW_NONE);
   
-  gasesVbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (gasesViewport), gasesVbox);
+  analogVbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (analogViewport), analogVbox);
   
-  gasesLabel = gtk_label_new ("Serial");
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 1), gasesLabel);
+  analogLabel = gtk_label_new ("Analog");
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 1), analogLabel);
   
-  /*   Valves Tab   */
-  valvesScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (controlsNbook), valvesScrolledWindow);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (valvesScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  /*   Discrete Devices Tab   */
+  discreteScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (controlsNbook), discreteScrolledWindow);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (discreteScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   
-  valvesViewport = gtk_viewport_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (valvesScrolledWindow), valvesViewport);
-  gtk_viewport_set_shadow_type (GTK_VIEWPORT (valvesViewport), GTK_SHADOW_NONE);
+  discreteViewport = gtk_viewport_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (discreteScrolledWindow), discreteViewport);
+  gtk_viewport_set_shadow_type (GTK_VIEWPORT (discreteViewport), GTK_SHADOW_NONE);
   
-  valvesVbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (valvesViewport), valvesVbox);
+  discreteVbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (discreteViewport), discreteVbox);
 
-  valvesLabel = gtk_label_new ("Discrete");
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 2), valvesLabel);
+  discreteLabel = gtk_label_new ("Discrete");
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 2), discreteLabel);
   
-  /*   Pumps Tab   */
-  pumpsScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (controlsNbook), pumpsScrolledWindow);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pumpsScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  /*   Serial Devices Tab   */
+  serialScrolledWindow = gtk_scrolled_window_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (controlsNbook), serialScrolledWindow);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (serialScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   
-  pumpsViewport = gtk_viewport_new (NULL, NULL);
-  gtk_container_add (GTK_CONTAINER (pumpsScrolledWindow), pumpsViewport);
-  gtk_viewport_set_shadow_type (GTK_VIEWPORT (pumpsViewport), GTK_SHADOW_NONE);
+  serialViewport = gtk_viewport_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (serialScrolledWindow), serialViewport);
+  gtk_viewport_set_shadow_type (GTK_VIEWPORT (serialViewport), GTK_SHADOW_NONE);
   
-  pumpsVbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (pumpsViewport), pumpsVbox);
+  serialVbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (serialViewport), serialVbox);
   
-  pumpsLabel = gtk_label_new ("Analog");
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 3), pumpsLabel);
+  serialLabel = gtk_label_new ("Serial");
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (controlsNbook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (controlsNbook), 3), serialLabel);
 }
 
 
