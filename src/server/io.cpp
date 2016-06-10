@@ -32,13 +32,13 @@ size_t io::DO(0);
 logger& io::ioLog = logger::instance();
 
 
-io::io()
+io::io(): n_aip(AIPORT), n_aop(AOPORT)
 {
   /* initialize hardware here  */  
-  if(!do_card_init() ||
-      !di_card_init() ||
-      !ai_card_init() ||
-      !ao_card_init())
+  if(!do_board_init() ||
+      !di_board_init() ||
+      !ai_board_init() ||
+      !ao_board_init())
   {
     string error("failed to initialize hardware...");
     ioLog.getstream(logLevel::DEFAULT, logType::IO)
@@ -50,63 +50,111 @@ io::io()
  
 io::~io()
 { close_all(); }
-  
-   
- 
-void io::getDI() const 
-{ 
-//   DI = ~DI_32(slot_di); 
-}   
- 
-void io::setDO() 
-{ 
-//   DO_32(slot_do, DO); 
-}
 
 bool io::get_di_bit(int pos) const
-{ 
-  return (1<<pos)&DI; 
-  return true;
-}
-
+{ return (1<<pos)&DI; }
  
-void io::set_do_bit(int pos)
-{ 
-  DO = (1<<pos)|DO; 
-}
+void io::set_do_bit(int pos) 
+{ DO = (1<<pos)|DO; }
 
 void io::rset_do_bit(int pos) 
-{ 
-  DO = (~(1<<pos))&DO; 
+{ DO = (~(1<<pos))&DO; } 
+
+
+
+float io::get_ai(int ch)  
+{
+  if(ch < 0 || ch > n_aip)
+  { return 0.00f; }  
+  
+  return aip[ch].convert(aip[ch].raw);
 } 
 
 
-void io::get_ai(int ch, int& ai, int& aim, float& aiv)  
+float io::get_aim(int ch)  
 {
-//   I8017_SetChannelGainMode (slot_ai, ch, aip[ch].gain, 0);
-//   ai = I8017_GetCurAdChannel_Hex(slot_ai); 
+  if(ch < 0 || ch > n_aip)
+  { return 0.00f; }  
   
-  aip[ch].update(ai, aim, aiv);
+  return aip[ch].convert(aip[ch].aim);
 } 
 
-void io::set_ao(int ch, int& ao, float& aov)
+
+
+
+void io::set_ao(int ch, float aov)
 {
-    if(ch || ao || aov) {}
-  
-  if(ch < 0 || ch > (int)(sizeof(aop)/sizeof(aop[0])) )
+  if(ch < 0 || ch > n_aop)
     { return;}
     
   aop[ch].vout = aov;
-  
-//   aop[ch].update(aov, ao);
-//   I8024_VoltageHexOut(slot_ao, ch, 0x1FFF + ao);
+  aop[ch].convert();
+  aop[ch].update = true;
 }
 
 
 float io::get_ao(int ch)
 {
-  if(ch < 0 || ch > (int)(sizeof(aop)/sizeof(aop[0])) )
-  { return 0.00f; }
+  if(ch < 0 || ch > n_aip)
+  { return 0.00f; }  
+ 
   return aop[ch].vout;
+}
+  
+
+
+void io::io_update() 
+{  /*  called every scan  */
+  do_board_update();  
+  di_board_update();
+  ao_board_update();
+  ai_board_update();
+}
+
+
+
+/*****************************  hardware access  **************************************/
+
+bool io::do_board_init() { return true; }
+bool io::di_board_init() { return true; }
+bool io::ai_board_init() { return true; }
+bool io::ao_board_init() { return true; }
+void io::close_all() {}
+
+
+void io::do_board_update() 
+{
+  /*  hardware library call, set do  */
+//  DO_32(slot_do, DO); 
+}
+
+void io::di_board_update()
+{ 
+  /*  hardware library call, get di  */
+//   DI = ~DI_32(slot_di); 
+}
+
+void io::ai_board_update()
+{ 
+  for(int ch = 0; ch < n_aip; ch++)
+  {
+    /*  hardware library call, get ai  */
+//     aip[ch].raw = GetAiValueFromChannel(ch);
+    aip[ch].update();
+  }
+}
+
+void io::ao_board_update()
+{ 
+  for(int ch = 0; ch < n_aop; ch++)
+  { 
+    if(aop[ch].update)
+    { 
+      /*  hardware library call, set ao  */
+//       SetAoValueChannel(ch, aop[ch].raw);
+      aop[ch].update = false;
+    }
+  }
+
 }
   

@@ -235,7 +235,7 @@ void cloop::get_connection_info(string& reply, bool connected, bool type)
 
 /*******************************************************************************************/
 
-/*    TODO   interrupt/signal/exception handler !!!  highest priority   */
+/*    TODO   interrupt/signal/exception handler    */
 #ifdef SERVER
 
 void cloop::enable(io& sys_io, fifo* ff, remote* eth)
@@ -257,10 +257,9 @@ void cloop::enable(io& sys_io, fifo* ff, remote* eth)
       first_cycle  = false;
     }
     
-    #ifdef LINPAC
-    sys_io.getDI();
-    sys_io.setDO();
-    #endif
+    /*  IO refresh  */ 
+    sys_io.io_update();
+
     
     /*      job start      */
     if(!eth->connection)

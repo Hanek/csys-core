@@ -37,7 +37,6 @@ device(lbl, time::msSec100), ai_ch(ai), ao_ch(ao)
   state                      = device_state::DISABLED;  
   io_cs.error              = err::NOERR;
   io_cs.command      = cmd::NOCMD;
-  io_cs.ao                  = 0;
   
   pair<deviceMapIterator, bool> ret;
   ret = deviceMap.insert ( pair<string, device*>(label, this));
@@ -77,7 +76,7 @@ void analogDevice::process(io &sys_io)
   emit = false;
   
   /*     poll IO     */
-  sys_io.get_ai(ai_ch, io_cs.ai, io_cs.aim, io_cs.aiv);
+  io_cs.aiv = sys_io.get_ai(ai_ch);
   humanize_ai();
   
   
@@ -100,13 +99,13 @@ void analogDevice::process(io &sys_io)
       case cmd::INIT:
         io_cs.aoh = 0.0;
         humanize_ao();
-        sys_io.set_ao(ao_ch, io_cs.ao, io_cs.aov);
+        sys_io.set_ao(ao_ch, io_cs.aov);
         state = device_state::DISABLED;
         break;
         
       case cmd::SETP:
         humanize_ao();
-        sys_io.set_ao(ao_ch, io_cs.ao, io_cs.aov);
+        sys_io.set_ao(ao_ch, io_cs.aov);
         state = device_state::ENABLED;
         break;
     }
@@ -150,10 +149,8 @@ void analogDevice::serialize()
   << state << delim 
   << io_cs.error << delim
   << io_cs.command << delim
-  << io_cs.aim << delim
   << io_cs.aiv << delim
   << io_cs.aih << delim
-  << io_cs.ao << delim
   << io_cs.aov << delim
   << io_cs.aoh << delim;
   
@@ -164,10 +161,8 @@ void analogDevice::serialize()
   << state << delim 
   << io_cs.error << delim
   << io_cs.command << delim
-  << io_cs.aim << delim
   << io_cs.aiv << delim
   << io_cs.aih << delim
-  << io_cs.ao << delim
   << io_cs.aov << delim
   << io_cs.aoh << endl;
 }

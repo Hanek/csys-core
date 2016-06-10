@@ -35,12 +35,9 @@ namespace dev
       int            error;
       int            command;
       
-      int            ai;          /*     ai real-time value, updated every scan    */
-      int            aim;      /*      ai mean value, updated every n scan     */
       float         aiv;      /*       ai voltage                                               */   
       float         aih;     /*        ai human notation                                 */
       
-      int            ao;         /*     ao real-time value     */
       float         aov;      /*      ao voltage                */
       float         aoh;     /*       ao human notation  */ 
 

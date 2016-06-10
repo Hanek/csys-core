@@ -61,10 +61,8 @@ void analogDevice::unserialize()
   is >> state
   >> io_cs.error 
   >> io_cs.command 
-  >> io_cs.aim
   >> io_cs.aiv
   >> io_cs.aih
-  >> io_cs.ao
   >> io_cs.aov
   >> io_cs.aoh;
   
@@ -74,10 +72,8 @@ void analogDevice::unserialize()
   << state << delim 
   << io_cs.error << delim
   << io_cs.command << delim
-  << io_cs.aim << delim
   << io_cs.aiv << delim
   << io_cs.aih << delim
-  << io_cs.ao << delim
   << io_cs.aov << delim
   << io_cs.aoh << endl;
   

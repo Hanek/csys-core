@@ -19,7 +19,8 @@
 #ifndef _IO_H
 #define _IO_H
 
-
+#define AIPORT 8
+#define AOPORT 8
 #define AISAMPL 50
 
 namespace csys
@@ -30,36 +31,51 @@ namespace csys
 
 struct aiport
 {
-  int         index;
-  int         len;
-  int         ai_sum;
-  int         gain;
-  int         buffer[AISAMPL];
+  /*  actual value, updated every scan  */
+  int raw;
+  /*  mean value, updated every nsampl scan  */
+  int aim;
   
-  aiport(): index(0), len(AISAMPL), ai_sum(0), gain(0) {}
+  int    index;
+  int    nsampl;
+  long sum;
   
-  void update(int ai_stream, int& ai_mean, float& aiv)
+  aiport(): raw(0), aim(0), 
+  index(0), nsampl(AISAMPL), sum(0) {}
+  
+  void update()
   {
-    buffer[index++] = ai_stream;
-    ai_sum += ai_stream;
+    index++;
+    sum += static_cast<long>(raw);
     
-    if(index > len - 1)
+    if(index > nsampl - 1)
     {
-      ai_mean = ai_sum/len;
-      aiv          = static_cast<float>(ai_mean)/static_cast<float>(0x1FFF/0x000A);
-      index      = 0;
-      ai_sum    = 0;
+      aim     = sum/static_cast<long>(nsampl);
+      index  = 0;
+      sum    = 0;
     }
   }
+  
+  float convert(int ai)
+  { return static_cast<float>(ai)/static_cast<float>(0x1FFF/0x000A); }
 };
+
+
 
 struct aoport
 {
-  int gain;
+  /*  actual value  */
+  int raw;
+  /*  voltage  */
   float vout;
-  aoport(): gain(0) {}
-  void update(float aov, int& ao)
-  { ao = static_cast<int>( (aov)*static_cast<float>(0x1FFF/0x000A) ); }
+  /*  on if value has to be updated  */
+  bool update;
+  
+  aoport(): raw(0.0f), vout(0), update(true) {}
+  
+  /*  convert voltage  */
+  void convert()
+  { raw = static_cast<int>( (vout)*static_cast<float>(0x1FFF/0x000A) ); }
 };
 
 
@@ -69,48 +85,48 @@ class io
 private:
   static size_t    DO;
   static size_t    DI;
-  int                   slot_di;
-  int                   slot_do;
-  int                   slot_ai;
-  int                   slot_ao;
-  aiport              aip[8];
-  aoport             aop[8];
+
+  aiport         aip[AIPORT];
+  aoport        aop[AOPORT];
+  const int n_aip;
+  const int n_aop;
   
 private:
-  /*  stub methods, must be provided by hw vendor  */
-  bool do_card_init() { return true; }
-  bool di_card_init() { return true; }
-  bool ai_card_init() { return true; }
-  bool ao_card_init() { return true; }
-  void close_all() {}
+  /*  hardware init */
+  bool do_board_init();
+  bool di_board_init();
+  bool ai_board_init();
+  bool ao_board_init();
+  void close_all();
+  
+  /*  hardware update  */
+  void do_board_update();
+  void di_board_update();
+  void ai_board_update();
+  void ao_board_update();
+
   
 public:
   static logger& ioLog;
   io();
   ~io();
-  void getDI() const;
-  void setDO();
+  
+  /*  called every scan, hardware access  */
+  void io_update();
+  
   bool get_di_bit(int pos) const;
-  /*   TODO  combine two in one   */
   void set_do_bit(int pos);
   void rset_do_bit(int pos);
   
   size_t extractDI() { return DI; }
   size_t extractDO() { return DO; }
-
-/*    data range  0x0000 ~ 0x1FFF, Voltage Input 0.0 ~ +10.0 V */
-/*    ch       -  channel number in ai slot                                        */
-/*    ai        -  input value updated with every set_ai() call           */
-/*    aim     -  mean input value                                                   */
-/*    aiv      -  mean input value measured in voltage                 */
-  void get_ai(int ch, int& ai, int& aim, float& aiv);
   
-/*  data range: 0x0000 ~ 0x3FFF,  Voltage Output: -10.0 ~ +10.0 V)  */
-/*    ch        -  channel number in ao slot                                             */
-/*    ao        -  output value updated with every set_ao() call              */
-/*    aov      -  output value measured in voltage                              */
-  void set_ao(int ch, int& ao, float& aov);
+  void set_ao(int ch, float aov);
+  /*  retrieve most recent values  */ 
   float get_ao(int ch);
+  float get_ai(int ch);
+  /*  retrieve mean value  */ 
+  float get_aim(int ch);
 };
 
 

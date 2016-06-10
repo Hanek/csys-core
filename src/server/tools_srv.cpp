@@ -208,11 +208,7 @@ void aiModule::process(io &sys_io)
   emit = false;
   /*     poll IO     */
   for(int ch = 0; ch < nchan; ch++)
-  {
-    int ai, aim;
-    sys_io.get_ai(ch, ai, aim, io_cs.ai[ch]);
-    io_cs.ai[ch] = 0;
-  }
+  { io_cs.ai[ch] = sys_io.get_ai(ch); }
   
   if(!init)
   { init = true; }
