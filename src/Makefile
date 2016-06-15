@@ -37,8 +37,13 @@ SRC_CLIENT= \
 	client/serial_device_client.cpp\
 	client/main_client.cpp
 
+SRC_EMULATOR=\
+	emulator/emulator.cpp\
+	emulator/test.cpp
+
 OBJ_SERVER = $(SRC_SERVER:%.cpp=../obj/server/%.o)
 OBJ_CLIENT = $(SRC_CLIENT:%.cpp=../obj/client/%.o)
+OBJ_EMULATOR = $(SRC_EMULATOR:%.cpp=../obj/emulator/%.o)
 
 CXX = g++
 
@@ -61,10 +66,17 @@ LDLIBS = `pkg-config gtk+-2.0 --libs`
 ../obj/%.o: %.cpp
 	$(CXX) -DCLIENT $(PRODUCT_FLAGS) -Wall -Wextra $(INCLUDES) -c -o $@ $<
 
-debug: client server loc
+../obj/emulator/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+debug: client server debug_footer
 
 rem: PRODUCT_FLAGS := -DREMOTE
-rem: clean_remote client_remote rmt
+rem: clean_remote client_remote rem_footer
+
+
+emu: emul
+
 
 client: $(OBJ_CLIENT)
 	$(CXX) -o $(BINDIR)$@ $(OBJ_CLIENT) $(LDLIBS) $(LDFLAGS)
@@ -75,18 +87,27 @@ client_remote: $(OBJ_CLIENT)
 server: $(OBJ_SERVER)
 	$(CXX) -o $(BINDIR)$@ $(OBJ_SERVER) $(LDLIBS) $(LDFLAGS)
 
-loc:
+emul: $(OBJ_EMULATOR)
+	$(CXX) -o $(BINDIR)$@ $(OBJ_EMULATOR) $(LDLIBS) $(LDFLAGS)
+
+
+
+debug_footer:
 	@echo "==========================================================================="; \
 	echo "$(TASK): server client\n"
 
-rmt:
+rem_footer:
 	@echo "==========================================================================="; \
 	echo "$(TASK): client_remote\n"
+
+emu_footer:
+	@echo "==========================================================================="; \
+	echo "$(TASK): emulator\n"
 
 clean_remote:
 	/bin/rm -f $(OBJ_CLIENT) $(BINDIR)client_eth
 
 clean:
-	/bin/rm -f $(OBJ_CLIENT) $(OBJ_SERVER) $(OBJ_STREAMER) $(BINDIR)client $(BINDIR)server $(BINDIR)streamer  *~
+	/bin/rm -f $(OBJ_CLIENT) $(OBJ_SERVER) $(OBJ_EMULATOR) $(BINDIR)client $(BINDIR)server $(BINDIR)emulator  *~
 
 	

@@ -3,7 +3,7 @@ Csys
 
 ### About
 
-Csys aims to provide basic funcionality of generalized control system to C++ developers.
+Csys aimed to provide basic functionality of generalized control system to C++ developers.
 
 ### Features
 

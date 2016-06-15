@@ -14,37 +14,47 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-#include <cstdlib>
+#include <stdio.h>
+#include <string.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
 
-#ifndef _DIO_EMUL_H
-#define _DIO_EMUL_H
+
+#ifndef _IO_EMUL_H
+#define _IO_EMUL_H
 
 
-namespace csys
-{
-#ifdef CLIENT
-  class window;
-#endif
+
+/*
+ *  run its own window 
+ *  display/change io parameters
+ *  read/write changes to shared memory
+ */
   
-class dioEmul: public device
+class ioEmul
 {
 private:
-
-
+  
+  key_t shmKey;
+  const int shmSize;;
+  
+  int shmId;
+  char* shmAddr;
+  char* pShm;
+  int next[2]; 
   
 public:
-  dioEmul();
-  ~dioEmul();
+  ioEmul();
+  ~ioEmul();
   
   bool get_di_bit(int pos) const;
-  void set_do_bit(int pos);
-  void rset_do_bit(int pos);
+  void tweak_do_bit(int pos, bool state);
 };
 
 
-}
 
 #endif
+
 
 
 
