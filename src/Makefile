@@ -13,6 +13,7 @@ SRC_COMMON = \
 	device.cpp\
 	fifo.cpp\
 	remote.cpp\
+	serializer.cpp\
 	vocabulary.cpp
 
 SRC_SERVER= \

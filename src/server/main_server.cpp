@@ -1,5 +1,6 @@
 #include <clocale>
 #include <pthread.h>
+#include <typeinfo>
 
 #include "io.h"
 #include "cloop.h"
@@ -10,14 +11,63 @@
 #include "logger.h"
 #include "remote.h"
 #include "tools.h"
-
+#include "serializer.h"
 
 using namespace csys;
 
 
-
+#include <vector>
 int main()
-{
+{ 
+  int a = 100;
+  char b = 'b';
+  float c = 3.141592;
+  int d = 99;
+  const char* p = "test string 1";
+  const char* str2 = "test string 2";
+
+  int aa, dd;
+  char bb;
+  float cc;
+  char pp[32];
+  char pstr2[32];
+  
+  csys::serializer ss;
+  
+  ss.serialize<int>(a);  
+  ss.serialize<char>(b);
+  ss.serialize_cstring(str2);
+  ss.sign_block("bl1");
+ 
+  ss.serialize<float>(c);
+  ss.serialize_cstring(p);
+  ss.serialize<int>(d);
+  ss.sign_block("bl2");
+       
+  ss.reset();  
+  
+  ss.read_block(pp);
+  std::cout << "block id: " << pp << std::endl;
+  ss.deserialize<int>(&aa);
+  ss.deserialize<char>(&bb);
+  ss.deserialize_cstring(pstr2);
+  
+  ss.read_block(pp);
+  std::cout << "block id: " << pp << std::endl;
+  ss.deserialize<float>(&cc);
+  ss.deserialize_cstring(pp);
+  ss.deserialize<int>(&dd);
+  
+//   std::cout << *(ss.pos - 1) << std::endl;
+  ss.dump();
+  std::cout << aa << std::endl << bb << std::endl << pstr2 << std::endl
+            << cc << std::endl << pp << std::endl << dd << std::endl;
+  
+  
+    
+  return 0;
+/****************************/
+   
   int bufferLen = 2048;
   
   remote eth(bufferLen); 
@@ -36,7 +86,6 @@ int main()
   
   csys::time comport_frame = csys::time::msSec500;
   csys::time comport_link = csys::time::Sec5;  
-  
   
   serial::bufferLen = bufferLen;
 //   serial port0("/dev/ttyUSB0", B9600, comport_frame, comport_link);
@@ -61,10 +110,10 @@ int main()
   dev::analogDevice analog2("ANALOG2", 2, 2);
   dev::analogDevice analog3("ANALOG3", 3, 3);
 
-  tools::diModule di_module;
-  tools::doModule do_module;
-  tools::aoModule ao_module;
-  tools::aiModule ai_module;
+//   tools::diModule di_module;
+//   tools::doModule do_module;
+//   tools::aoModule ao_module;
+//   tools::aiModule ai_module;
 
   
   loop.enable(sys_io, &ff, &eth);
