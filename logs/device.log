@@ -1,0 +1,74 @@
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] ---------------------------------- device::device():session started... ---------------------------------- 
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] DISCRETE1 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] DISCRETE2 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] DISCRETE3 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] DISCRETE4 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] ANALOG1 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] ANALOG2 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] ANALOG3 device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] diModule device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] doModule device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] aoModule device::device()
+[SERVER] [2016-09-05 07:40:06] [DEFAULT] aiModule device::device()
+[SERVER] [2016-09-05 07:40:07] [DEFAULT] DISCRETE1 request_handler: exceeded timeout
+[SERVER] [2016-09-05 07:40:07] [DEFAULT] DISCRETE2 request_handler: exceeded timeout
+[SERVER] [2016-09-05 07:40:07] [DEFAULT] DISCRETE3 request_handler: exceeded timeout
+[SERVER] [2016-09-05 07:40:07] [DEFAULT] DISCRETE4 request_handler: exceeded timeout
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] ---------------------------------- device::device():session started... ---------------------------------- 
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] DISCRETE1 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] DISCRETE2 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] DISCRETE3 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] DISCRETE4 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] ANALOG1 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] ANALOG2 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] ANALOG3 device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] diModule device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] doModule device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] aoModule device::device()
+[SERVER] [2016-11-02 21:36:15] [DEFAULT] aiModule device::device()
+[SERVER] [2016-11-02 21:36:16] [DEFAULT] DISCRETE1 request_handler: exceeded timeout
+[SERVER] [2016-11-02 21:36:16] [DEFAULT] DISCRETE2 request_handler: exceeded timeout
+[SERVER] [2016-11-02 21:36:16] [DEFAULT] DISCRETE3 request_handler: exceeded timeout
+[SERVER] [2016-11-02 21:36:16] [DEFAULT] DISCRETE4 request_handler: exceeded timeout
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] ---------------------------------- device::device():session started... ---------------------------------- 
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] DISCRETE1 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] DISCRETE2 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] DISCRETE3 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] DISCRETE4 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] ANALOG1 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] ANALOG2 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] ANALOG3 device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] diModule device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] doModule device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] aiModule device::device()
+[CLIENT]  [2016-11-02 21:39:56] [DEFAULT] aoModule device::device()
+[SERVER] [2016-11-02 21:42:04] [DEFAULT] DISCRETE1 request_handler: opening failed, exceeded timeout
+[SERVER] [2016-11-02 21:42:09] [DEFAULT] DISCRETE1 request_handler: closing failed, exceeded timeout
+[SERVER] [2016-11-02 21:42:14] [DEFAULT] DISCRETE1 request_handler: closing failed, exceeded timeout
+[SERVER] [2016-11-02 21:42:21] [DEFAULT] DISCRETE1 request_handler: closing failed, exceeded timeout
+[SERVER] [2016-11-02 21:42:26] [DEFAULT] DISCRETE2 request_handler: closing failed, exceeded timeout
+[SERVER] [2016-11-02 21:48:17] [DEFAULT] DISCRETE1 request_handler: exceeded timeout
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] ---------------------------------- device::device():session started... ---------------------------------- 
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] DISCRETE1 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] DISCRETE2 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] DISCRETE3 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] DISCRETE4 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] ANALOG1 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] ANALOG2 device::device()
+[SERVER] [2017-02-08 08:10:16] [DEFAULT] ANALOG3 device::device()
+[SERVER] [2017-02-08 08:10:17] [DEFAULT] DISCRETE1 request_handler: exceeded timeout
+[SERVER] [2017-02-08 08:10:17] [DEFAULT] DISCRETE2 request_handler: exceeded timeout
+[SERVER] [2017-02-08 08:10:17] [DEFAULT] DISCRETE3 request_handler: exceeded timeout
+[SERVER] [2017-02-08 08:10:17] [DEFAULT] DISCRETE4 request_handler: exceeded timeout
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] ---------------------------------- device::device():session started... ---------------------------------- 
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] DISCRETE1 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] DISCRETE2 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] DISCRETE3 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] DISCRETE4 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] ANALOG1 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] ANALOG2 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] ANALOG3 device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] diModule device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] doModule device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] aiModule device::device()
+[CLIENT]  [2017-02-08 08:10:32] [DEFAULT] aoModule device::device()
