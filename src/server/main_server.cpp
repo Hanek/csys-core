@@ -49,6 +49,7 @@ int main()
   std::cout << "done\n";
   
   
+  ss.dump();
   ss.reset();
   
   ss.read_block(pp);
@@ -67,8 +68,8 @@ int main()
   ss.deserialize_cstring(pp);
   ss.deserialize<int>(&dd);
  std::cout << cc << std::endl << dd << std::endl;
- 
-  ss.dump();
+ std::cout << ss.size << std::endl;
+//   ss.dump();
   
       
   
