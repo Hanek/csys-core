@@ -108,8 +108,11 @@ namespace csys
     
     void serialize_cstring(const char* str) 
     { 
-      if(strlen(str) > pos - buf - 1) 
+      std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << std::endl;
+      
+      if(strlen(str) >= (int)size - (pos - buf) - 1) 
       { out_of_mem(); }
+      
       memcpy(pos, str, strlen(str)); 
       pos += strlen(str); 
       *pos = 0x00; 
@@ -127,7 +130,7 @@ namespace csys
     {
       std::cout << "remaining space: " << (int)size - (pos - buf) << std::endl;
       
-      if(sizeof(T) >= (int)size - (pos - buf) - 1) 
+      if(sizeof(T) >= (int)size - (pos - buf)) 
       { 
         out_of_mem(); 
       }
@@ -145,16 +148,14 @@ namespace csys
     
     void dump()
     {
-      std::ofstream file("buf.bin", std::ios::out | std::ios::binary);
-      file.write(buf, size);
-      file.close();
+      
+//       std::ofstream file("buf.bin", std::ios::out | std::ios::binary);
+//       file.write(buf, size);
+//       file.close();
       
     }
     
   };
 }
 #endif
-
-
-
 
