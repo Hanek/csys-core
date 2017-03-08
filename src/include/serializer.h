@@ -20,7 +20,7 @@ namespace csys
  *    | cstring | size_t|  int  |   cstring   |     float     |
  *    |s i g n a t u r e|            m e s s a g e            |
  *
- *    beg  - points to the begininng of a block
+ *    beg  - points to the begininng of block
  *    len  - message length
  *    
  */
@@ -92,6 +92,9 @@ namespace csys
       memcpy(beg, id, hlen);
       memcpy(beg + hlen, &len, sizeof(len));
       beg = pos;
+      std::cout << "sign_block: " << pos - buf << "\t" << hlen << "\t" << sizeof(len) << std::endl;
+      if(size - (pos - buf) <= (hlen + sizeof(len)))
+      { out_of_mem(); }
       pos += hlen + sizeof(len);
     }
     
@@ -108,7 +111,7 @@ namespace csys
     
     void serialize_cstring(const char* str) 
     { 
-      std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << std::endl;
+      std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos- buf << std::endl;
       
       if(strlen(str) >= (int)size - (pos - buf) - 1) 
       { out_of_mem(); }
@@ -128,7 +131,7 @@ namespace csys
     
     template <class T> void serialize(T var) 
     {
-      std::cout << "remaining space: " << (int)size - (pos - buf) << std::endl;
+      std::cout << "remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos - buf << std::endl;
       
       if(sizeof(T) >= (int)size - (pos - buf)) 
       { 
@@ -149,9 +152,9 @@ namespace csys
     void dump()
     {
       
-//       std::ofstream file("buf.bin", std::ios::out | std::ios::binary);
-//       file.write(buf, size);
-//       file.close();
+      std::ofstream file("buf.bin", std::ios::out | std::ios::binary);
+      file.write(buf, size);
+      file.close();
       
     }
     

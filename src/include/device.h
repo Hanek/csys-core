@@ -15,17 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 
-#include <gtk/gtk.h>
 #include <map>
 #include <iostream>
 #include <string>
 #include <sstream>
 
-#include "journal.h"
+
 #include "timespec.h"
 
 #ifdef SERVER
 #include "serial.h"
+#endif
+
+#ifdef CLIENT
+#include <gtk/gtk.h>
+#include "journal.h"
 #endif
 
 #ifndef _DEVICE_H
