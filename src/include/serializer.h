@@ -54,25 +54,39 @@ namespace csys
       head = true;
     }
     
-//     ~serializer() { free(buf); }
+    ~serializer() { free(buf); }
     
     void out_of_mem()
     {
       /* realloc if memory is over */
       
+      size *= 2;
       size_t shift1 = pos - buf;
       size_t shift2 = beg - buf;
-      char buf_new[size] = {0};
-      memcpy(buf_new, buf, size);
-      free(buf);
-      size *= 2;
-      buf = (char*)malloc(size);
-      if(!buf)
+      char* buf_new;
+      buf_new = (char*)malloc(size);
+      if(!buf_new)
       { /* malloc failed */}
+      memset(buf_new, 0x00, size);
+      memcpy(buf_new, buf, size/2);
+      free(buf);
+      buf = buf_new;
       pos = buf + shift1;
       beg = buf + shift2;
-      memset(buf, 0x00, size);
-      memcpy(buf, buf_new, size/2);
+            
+//       size_t shift1 = pos - buf;
+//       size_t shift2 = beg - buf;
+//       char buf_new[size] = {0};
+//       memcpy(buf_new, buf, size);
+//       free(buf);
+//       size *= 2;
+//       buf = (char*)malloc(size);
+//       if(!buf)
+//       { /* malloc failed */}
+//       pos = buf + shift1;
+//       beg = buf + shift2;
+//       memset(buf, 0x00, size);
+//       memcpy(buf, buf_new, size/2);
       
       std::cout << "realloc: " << size << std::endl;
     }
@@ -92,7 +106,7 @@ namespace csys
       memcpy(beg, id, hlen);
       memcpy(beg + hlen, &len, sizeof(len));
       beg = pos;
-      std::cout << "sign_block: " << pos - buf << "\t" << hlen << "\t" << sizeof(len) << std::endl;
+//       std::cout << "sign_block: " << pos - buf << "\t" << hlen << "\t" << sizeof(len) << std::endl;
       if(size - (pos - buf) <= (hlen + sizeof(len)))
       { out_of_mem(); }
       pos += hlen + sizeof(len);
@@ -111,9 +125,9 @@ namespace csys
     
     void serialize_cstring(const char* str) 
     { 
-      std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos- buf << std::endl;
+//       std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos- buf << std::endl;
       
-      if(strlen(str) >= (int)size - (pos - buf) - 1) 
+      if(strlen(str) >= size - (pos - buf) - 1) 
       { out_of_mem(); }
       
       memcpy(pos, str, strlen(str)); 
@@ -131,9 +145,9 @@ namespace csys
     
     template <class T> void serialize(T var) 
     {
-      std::cout << "remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos - buf << std::endl;
+//       std::cout << "remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos - buf << std::endl;
       
-      if(sizeof(T) >= (int)size - (pos - buf)) 
+      if(sizeof(T) >= size - (pos - buf)) 
       { 
         out_of_mem(); 
       }

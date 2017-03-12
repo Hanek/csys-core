@@ -119,17 +119,18 @@ ostream& csys::operator << (ostream& os, const csys::time tm)
   int len = 0x32;
   char buffer[len];
   memset(buffer, '\0', len);
+  int res = (tm.hi_res) ? 1 : 0;
   
-  switch (tm.hi_res)
+  switch (res)
   {
-    case true:
+    case 1:
       if(tm < time::zero)
       { os << "        -" << setw(1) << (-tm.get().tv_sec) - 1 << ":" << setw(9) << time::nsec10L9 - tm.get().tv_nsec; }
       else
       { os << setw(10) << tm.get().tv_sec << ":" << setw(9) << tm.get().tv_nsec; }
       break;
     
-    case false:
+    case 0:
       struct tm* timeinfo;
       timeinfo = localtime(&(tm.get().tv_sec));
       strftime (buffer, len, "%F %T", timeinfo);

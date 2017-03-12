@@ -101,14 +101,14 @@ gboolean journal::widget::time_handler(widget* pJrnl)
   
   while(jRef.pop(temp))
   {
-    
-    switch(temp.error)
+    int res = (temp.error) ? 1 : 0;
+    switch(res)
     {
-      case false:
+      case 1:
         gtk_text_buffer_insert(pJrnl->buffer, &pJrnl->iter, temp.strbuf.c_str(), -1); 
         break;
         
-      case true:
+      case 0:
         gtk_text_buffer_insert_with_tags_by_name(pJrnl->buffer, &pJrnl->iter, temp.strbuf.c_str(), -1, "red_fg", "lmarg",  NULL); 
         break;
     }

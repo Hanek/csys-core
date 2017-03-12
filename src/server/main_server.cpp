@@ -11,7 +11,6 @@
 #include "logger.h"
 #include "remote.h"
 #include "tools.h"
-#include "serializer.h"
 
 using namespace csys;
 
@@ -35,8 +34,8 @@ int main()
   ff.start();
   
   
-  csys::time comport_frame = csys::time::msSec500;
-  csys::time comport_link = csys::time::Sec5;  
+//   csys::time comport_frame = csys::time::msSec500;
+//   csys::time comport_link = csys::time::Sec5;  
   
   serial::bufferLen = bufferLen;
 //   serial port0("/dev/ttyUSB0", B9600, comport_frame, comport_link);
