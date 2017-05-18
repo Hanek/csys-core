@@ -11,6 +11,7 @@ SRC_COMMON = \
 	timespec.cpp\
 	cloop.cpp\
 	device.cpp\
+	dev.cpp\
 	fifo.cpp\
 	remote.cpp\
 	vocabulary.cpp
@@ -20,6 +21,7 @@ SRC_SERVER= \
 	server/fifo_server.cpp\
 	server/serial.cpp\
 	server/io.cpp\
+	server/discrete.cpp\
 	server/discrete_device_server.cpp\
 	server/analog_device_server.cpp\
 	server/serial_device_server.cpp\

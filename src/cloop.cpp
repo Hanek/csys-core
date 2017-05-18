@@ -13,6 +13,8 @@
 #include "remote.h"
 #include "commac.h"
 
+#include "dev.h"
+
 #ifdef SERVER
 #include "io.h"
 #endif

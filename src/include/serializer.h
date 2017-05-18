@@ -1,7 +1,13 @@
+/*
+ * pod serializer requirements:
+ * - allocate memory when needed;
+ * - named blocks with pod types defined by user; 
+ */ 
+
+
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
-#include <typeinfo>
 
 #include <fstream>
 
@@ -15,17 +21,17 @@ namespace csys
     
 /*                          block structure
  * 
- *    |_|_|_|_|0|_|_|_|_|_|_|_|_|_|_|_|_|_|_|0|_|_|_|_|_|_|_|_|
+ *    |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|0|_|_|_|_|_|_|_|_|
  *    | dev_id  |  len  |       |             |               |
  *    | cstring | size_t|  int  |   cstring   |     float     |
  *    |s i g n a t u r e|            m e s s a g e            |
  *
- *    beg  - points to the begininng of block
+ *    beg  - points to the begininng of the block
  *    len  - message length
- *    
+ *    hlen - length of dev_id
  */
     
-  public:
+  private:
     char*  buf;
     bool   head;
     
@@ -39,7 +45,7 @@ namespace csys
     /* size of buffer */
     size_t size;
     /* length of dev_id header */
-    size_t hlen;
+    const size_t hlen;
   
   public:
     serializer(): size(16), hlen(4) 
@@ -55,10 +61,19 @@ namespace csys
     }
     
     ~serializer() { free(buf); }
-    
+    size_t get_size() { return size; }
+    const char* buffer_fetch() { return buf; }
+    void buffer_update(const char* bufin, size_t sizein)
+    {
+//       std::cout << __func__ << ": " << size << "\t" << strlen(bufin) << std::endl;
+      if(size <= sizein)
+      { realloc(sizein); }
+      memcpy(buf, bufin, sizein);
+    }
+
     void out_of_mem()
     {
-      /* realloc if memory is over */
+      /* realloc preserving old data */
       
       size *= 2;
       size_t shift1 = pos - buf;
@@ -74,20 +89,25 @@ namespace csys
       pos = buf + shift1;
       beg = buf + shift2;
             
-//       size_t shift1 = pos - buf;
-//       size_t shift2 = beg - buf;
-//       char buf_new[size] = {0};
-//       memcpy(buf_new, buf, size);
-//       free(buf);
-//       size *= 2;
-//       buf = (char*)malloc(size);
-//       if(!buf)
-//       { /* malloc failed */}
-//       pos = buf + shift1;
-//       beg = buf + shift2;
-//       memset(buf, 0x00, size);
-//       memcpy(buf, buf_new, size/2);
+      std::cout << "out_of_mem: " << size << std::endl;
+    }
+    
+    void realloc(size_t sizein)
+    {
+      /* plain realloc  */
+      size = sizein;
+      char* buf_new;
+      buf_new = (char*)malloc(size);
+      if(!buf_new)
+      { /* malloc failed */}
+      free(buf);
+      buf = buf_new;
       
+      memset(buf, 0x00, size);                                     
+      pos = buf + hlen + sizeof(len); 
+      beg = buf;
+      len = 0;
+      head = true;     
       std::cout << "realloc: " << size << std::endl;
     }
     
