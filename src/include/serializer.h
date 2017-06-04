@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <cstdlib>
+#include <cerrno>
 #include <iostream>
 
 #include <fstream>
@@ -19,12 +20,14 @@ namespace csys
   class serializer
   {
     
-/*                          block structure
+/*  
+ *
+ *                        block structure
  * 
  *    |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|0|_|_|_|_|_|_|_|_|
  *    | dev_id  |  len  |       |             |               |
  *    | cstring | size_t|  int  |   cstring   |     float     |
- *    |s i g n a t u r e|            m e s s a g e            |
+ *    |s i g n a t u r e|          b l o c k   b o d y        |
  *
  *    beg  - points to the begininng of the block
  *    len  - message length
@@ -32,164 +35,185 @@ namespace csys
  */
     
   private:
-    char*  buf;
-    bool   head;
+    int    message_len_;
+    char*  buf_;
+    bool   head_;
     
     /* current position */
-    char*  pos;
+    char*  pos_;
     /* begininng of current block */
-    char*  beg;
-    /* current message len */
-    size_t len;
+    char*  beg_;
+    /* current block length */
+    size_t block_len_;
     
     /* size of buffer */
-    size_t size;
+    size_t size_;
     /* length of dev_id header */
-    const size_t hlen;
-  
-  public:
-    serializer(): size(16), hlen(4) 
-    { 
-      buf  = (char*)malloc(size);
-      if(!buf)
-      { /* malloc failed */}
-      memset(buf, 0x00, size);                                     
-      pos = buf + hlen + sizeof(len); 
-      beg = buf;
-      len = 0;
-      head = true;
-    }
+    const size_t hlen_;
     
-    ~serializer() { free(buf); }
-    size_t get_size() { return size; }
-    const char* buffer_fetch() { return buf; }
-    void buffer_update(const char* bufin, size_t sizein)
-    {
-//       std::cout << __func__ << ": " << size << "\t" << strlen(bufin) << std::endl;
-      if(size <= sizein)
-      { realloc(sizein); }
-      memcpy(buf, bufin, sizein);
-    }
-
     void out_of_mem()
     {
-      /* realloc preserving old data */
-      
-      size *= 2;
-      size_t shift1 = pos - buf;
-      size_t shift2 = beg - buf;
+      /* realloc preserving old data */  
+      size_ *= 2;
+      size_t shift1 = pos_ - buf_;
+      size_t shift2 = beg_ - buf_;
       char* buf_new;
-      buf_new = (char*)malloc(size);
+      buf_new = (char*)malloc(size_);
       if(!buf_new)
-      { /* malloc failed */}
-      memset(buf_new, 0x00, size);
-      memcpy(buf_new, buf, size/2);
-      free(buf);
-      buf = buf_new;
-      pos = buf + shift1;
-      beg = buf + shift2;
+      {
+        char err[64] = {0};
+        sprintf(err, "[%s] malloc failed: %s\n", __func__, strerror(errno)); 
+        fwrite(err, 1, strlen(err), stderr);
+      }
+      memset(buf_new, 0x00, size_);
+      memcpy(buf_new, buf_, size_/2);
+      free(buf_);
+      buf_ = buf_new;
+      pos_ = buf_ + shift1;
+      beg_ = buf_ + shift2;
             
-      std::cout << "out_of_mem: " << size << std::endl;
+      std::cout << "out_of_mem: " << size_ << std::endl;
     }
     
     void realloc(size_t sizein)
     {
       /* plain realloc  */
-      size = sizein;
+      size_ = sizein;
       char* buf_new;
-      buf_new = (char*)malloc(size);
+      buf_new = (char*)malloc(size_);
       if(!buf_new)
-      { /* malloc failed */}
-      free(buf);
-      buf = buf_new;
+      { 
+        char err[64] = {0};
+        sprintf(err, "[%s] malloc failed: %s\n", __func__, strerror(errno)); 
+        fwrite(err, 1, strlen(err), stderr);
+      }
+      free(buf_);
+      buf_ = buf_new;
       
-      memset(buf, 0x00, size);                                     
-      pos = buf + hlen + sizeof(len); 
-      beg = buf;
-      len = 0;
-      head = true;     
-      std::cout << "realloc: " << size << std::endl;
+      memset(buf_, 0x00, size_);                                     
+      pos_       = buf_ + hlen_ + sizeof(block_len_); 
+      beg_       = buf_;
+      block_len_ = 0;
+      head_      = true;     
+      std::cout << "realloc: " << size_ << std::endl;
+    }
+    
+  
+  public:
+    serializer(): size_(32), hlen_(4) 
+    { 
+      buf_  = (char*)malloc(size_);
+      if(!buf_)
+      { /* malloc failed */}
+      memset(buf_, 0x00, size_);
+      message_len_ = 0;
+      pos_         = buf_ + hlen_ + sizeof(block_len_); 
+      beg_         = buf_;
+      block_len_   = 0;
+      head_        = true;
+    }
+    
+    ~serializer() { free(buf_); }
+    bool empty() { return (0 == size_) ? 1 : 0; }
+    size_t get_size() { return size_; }
+    size_t length() { return message_len_; }
+    size_t get_hlen() { return hlen_; }
+    const char* buffer_fetch() { return buf_; }
+    
+    void buffer_update(const char* bufin, size_t sizein)
+    {
+      if(size_ <= sizein)
+      { realloc(sizein); }
+      memcpy(buf_, bufin, sizein);
+      message_len_ = (int)sizein;
+    }
+
+    void clear()
+    {
+     reset();
+     memset(buf_, 0x00, size_); 
+     message_len_ = 0;
     }
     
     void reset() 
     {
-      pos = buf + hlen + sizeof(len); 
-      beg = buf;
-      len = 0;
-      head = true;
+      pos_       = buf_ + hlen_ + sizeof(block_len_); 
+      beg_       = buf_;
+      block_len_ = 0;
+      head_      = true;
     }
     
     /* call when device serialization is done */
     void sign_block(const char* id)
     {
-      len  = (pos - beg) - hlen - sizeof(len);
-      memcpy(beg, id, hlen);
-      memcpy(beg + hlen, &len, sizeof(len));
-      beg = pos;
-//       std::cout << "sign_block: " << pos - buf << "\t" << hlen << "\t" << sizeof(len) << std::endl;
-      if(size - (pos - buf) <= (hlen + sizeof(len)))
+      block_len_ = (pos_ - beg_) - hlen_ - sizeof(block_len_);
+      message_len_ += (pos_ - beg_);
+      memcpy(beg_, id, hlen_);
+      memcpy(beg_ + hlen_, &block_len_, sizeof(block_len_));
+      beg_ = pos_;
+      if(size_ - (pos_ - buf_) <= (hlen_ + sizeof(block_len_)))
       { out_of_mem(); }
-      pos += hlen + sizeof(len);
+      pos_ += hlen_ + sizeof(block_len_);
     }
     
-    void read_block(char* id)
+    bool read_block(char* id)
     {
-      if(!head)
-      { beg += len + hlen + sizeof(len); }
-      pos = beg + hlen + sizeof(len);
-      memcpy(id, beg, hlen);
-      memcpy(&len, beg + hlen, sizeof(len));
-      head = false;
+      if(message_len_ <= pos_ - beg_)
+      { return false; }
+      if(!head_)
+      { beg_ += block_len_ + hlen_ + sizeof(block_len_); }
+      
+      if(0x00 == *beg_) { return false; }
+      pos_ = beg_ + hlen_ + sizeof(block_len_);
+      memcpy(id, beg_, hlen_);
+      memcpy(&block_len_, beg_ + hlen_, sizeof(block_len_));
+      head_ = false;
+      
+      return true;
     }
     
     
     void serialize_cstring(const char* str) 
     { 
-//       std::cout << "cstring::remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos- buf << std::endl;
-      
-      if(strlen(str) >= size - (pos - buf) - 1) 
+      if(strlen(str) >= size_ - (pos_ - buf_) - 1) 
       { out_of_mem(); }
       
-      memcpy(pos, str, strlen(str)); 
-      pos += strlen(str); 
-      *pos = 0x00; 
-      pos += 1;
+      memcpy(pos_, str, strlen(str)); 
+      pos_ += strlen(str); 
+      *pos_ = 0x00; 
+      pos_ += 1;
     }
     
     void deserialize_cstring(char* str)
     { 
-      memcpy((void*)str, pos, strlen(pos)); 
-      pos += strlen(pos) + 1; 
-      
+      memcpy((void*)str, pos_, strlen(pos_)); 
+      pos_ += strlen(pos_) + 1; 
     } 
     
     template <class T> void serialize(T var) 
-    {
-//       std::cout << "remaining space: " << (int)size - (pos - buf) << "\t" << size << "\t" << pos - buf << std::endl;
-      
-      if(sizeof(T) >= size - (pos - buf)) 
+    { 
+      if(sizeof(T) >= size_ - (pos_ - buf_)) 
       { 
         out_of_mem(); 
       }
       
       
-      memcpy(pos, &var, sizeof(T)); 
-      pos += sizeof(T);
+      memcpy(pos_, &var, sizeof(T)); 
+      pos_ += sizeof(T);
     }
     
     template <class T> void deserialize(T* var) 
     { 
-      memcpy((void*)var, pos, sizeof(T)); 
-      pos += sizeof(T);
+      memcpy((void*)var, pos_, sizeof(T)); 
+      pos_ += sizeof(T);
     }
     
     void dump()
     {
       
       std::ofstream file("buf.bin", std::ios::out | std::ios::binary);
-      file.write(buf, size);
+      file.write(buf_, size_);
       file.close();
-      
     }
     
   };

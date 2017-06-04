@@ -34,7 +34,7 @@ namespace csys
   
 class logger;
 
-/*    Communication class driven by Length-Value protocol
+/*    fifo based transport driven by Length-Value protocol
  *    first 4 byte treated as 4byte integer which holds length of Value field.
  *    buffer_in[] must be supplied with null-terminated string
  */ 

@@ -72,16 +72,10 @@ public:
 
 public:
   dev(const char* lbl, time tm);
-#ifdef SERVER
-  static std::map<std::string,serial*> serialMap_;
-#endif
   static void  generic_controller_module(const bool connected);
 };
 
 typedef std::map<std::string,dev*>::iterator devMapIterator;
-#ifdef SERVER
-typedef std::map<std::string,serial*>::iterator serialMapIterator;
-#endif
 
 }
 #endif

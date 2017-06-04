@@ -14,6 +14,7 @@ SRC_COMMON = \
 	dev.cpp\
 	fifo.cpp\
 	remote.cpp\
+	transport.cpp\
 	vocabulary.cpp
 
 SRC_SERVER= \

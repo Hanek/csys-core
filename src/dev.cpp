@@ -32,9 +32,6 @@ csys::time dev::time_global(false);
 serializer dev::os_;
 serializer dev::is_;
 
-#ifdef SERVER
-map<string,serial*> dev::serialMap_;
-#endif 
 dev::dev(const char* lbl, time tm): label_(lbl), timeout_(tm)
 {
   init_       = false;
@@ -57,58 +54,51 @@ dev::~dev()
 
 void dev::generic_controller_module(const bool connected)
 {
-//   deviceMapIterator dmit;
-//   serialMapIterator smit;
-//   string testLabel;
+  devMapIterator dmit;
+  char devLabel[32] = {0};
 
-//   if(!is.str().empty())
-//   {
-//     /* dispatch messages from stringstream */
-//      while(is >> testLabel)
-//     {
-//       dmit = dev::deviceMap.find(testLabel);
-//       
-//       if(dmit == dev::deviceMap.end())
-//       {
-//         testLabel.clear();
-//         continue;
-//       }
-//       dmit->second->unserialize();
-//       testLabel.clear();
-//     }
-//   }
-//   
-//   is.clear();
-//   dev::is.str(string());
-//   os.clear();
-//   dev::os.str(string());
-//  
-//   for(smit = dev::serialMap.begin(); smit != dev::serialMap.end(); smit++)
-//   { smit->second->process(); } 
-//   
-//   
-//   if(!dmit->second->connection && connected)
-//   { /*  send device's states to client when connection established */
-//     for(dmit = dev::deviceMap.begin(); dmit != dev::deviceMap.end(); dmit++)
-//     { 
-//       dmit->second->process(sys_io);  
-//       dmit->second->emit = true;
-//       dmit->second->serialize();
-//     }
-//     dmit->second->connection = true;
-//     return;
-//   }
-// 
-//   for(dmit = dev::deviceMap.begin(); dmit != dev::deviceMap.end(); dmit++)
-//   {
-//     dmit->second->process(sys_io); 
-//       
-//     if(!connected)
-//     { dmit->second->connection = false; }
-//     
-//     if(dmit->second->emit && connected)
-//     { dmit->second->serialize(); }
-//   }
+  if(!is_.empty())
+  {
+    while(is_.read_block(devLabel))
+    {
+      dmit = deviceMap_.find(devLabel);
+      
+      if(dmit == deviceMap_.end())
+      {
+        /* jump to the next block */
+        memset(devLabel, 0x00, sizeof(devLabel));
+        continue;
+      }
+      dmit->second->unserialize();
+      memset(devLabel, 0x00, sizeof(devLabel));
+    }
+  }
+  
+  is_.clear();
+  os_.clear();
+  
+  if(!dmit->second->connection_ && connected)
+  { /*  send device's states to client when connection established */
+    for(dmit = deviceMap_.begin(); dmit != deviceMap_.end(); dmit++)
+    { 
+      dmit->second->process();  
+      dmit->second->emit_ = true;
+      dmit->second->serialize();
+    }
+    dmit->second->connection_ = true;
+    return;
+  }
+
+  for(dmit = deviceMap_.begin(); dmit != deviceMap_.end(); dmit++)
+  {
+    dmit->second->process(); 
+      
+    if(!connected)
+    { dmit->second->connection_ = false; }
+    
+    if(dmit->second->emit_ && connected)
+    { dmit->second->serialize(); }
+  }
   
 }
 
@@ -120,51 +110,31 @@ void dev::generic_controller_module(const bool connected)
 
 
 
-// void dev::generic_controller_module(const bool connected)
-// {
-//   deviceMapIterator dmit;
-//   string testLabel;
-//   
-//   dev::connection = connected;
-//   
-//   /* dispatch messages from stringstream */
-//     while(is >> testLabel)
-//     {
-//       dmit = dev::deviceMap.find(testLabel);
-//       
-//       if(dmit == dev::deviceMap.end())
-//       {
-//         testLabel.clear();
-//         continue;
-//       }
-//       dmit->second->unserialize();
-//       testLabel.clear();
-//     }
-//     
-//     
-//     is.clear();
-//     dev::is.str(string());
-//     os.clear();
-//     dev::os.str(string());
-//     
-//   
-//   for(dmit = dev::deviceMap.begin(); dmit != dev::deviceMap.end(); dmit++)
-//   { 
-//     /*     locking devices in the main loop   */
-//     pthread_mutex_lock(dmit->second->glock());
-//    
-//     dmit->second->process(); 
-//     if(dmit->second->emit && connected)
-//     { 
-//       dmit->second->serialize(); 
-//       dmit->second->reset_emit();
-//     }
-//     
-//     pthread_mutex_unlock(dmit->second->glock());
-//   }
-// }
-
+void dev::generic_controller_module(const bool connected)
+{
+  devMapIterator dmit;
+  char devLabel[32] = {0};
  
+  connection_ = connected;
+  
+  while(is_.read_block(devLabel))
+  {
+    dmit = deviceMap_.find(devLabel);
+    
+    if(dmit == deviceMap_.end())
+    {
+      memset(devLabel, 0x00, sizeof(devLabel));
+      continue; 
+    }
+    dmit->second->unserialize();
+    memset(devLabel, 0x00, sizeof(devLabel));
+  }
+  
+  
+  is_.clear();
+  os_.clear();
+}
+
 #endif
 
 
