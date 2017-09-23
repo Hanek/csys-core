@@ -28,7 +28,7 @@ namespace csys
 
 class fifo;
 class io;
-class remote;
+class transport;
 
 class cloop
 {
@@ -37,7 +37,7 @@ private:
   static const time    scantime;
   /*  define synchronization window  */
   static const long int         width;
-  long int                            scanCounter;
+  long int                      scanCounter;
   time     time_beg;
   time     time_in;
   time     time_jmp;
@@ -71,11 +71,11 @@ public:
   time& pTime() { return time_jmp; }
   
 #ifdef SERVER
-  void enable(io& sys_io, fifo* ff, remote* eth);
+  void enable(io& sys_io, fifo* ff, transport* eth);
 #endif	
 
 #ifdef CLIENT
-  void enable(fifo* ff, remote* eth);
+  void enable(fifo* ff, transport* eth);
 #endif
 
 };

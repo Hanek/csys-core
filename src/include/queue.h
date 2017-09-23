@@ -2,6 +2,9 @@
  * queue requirements:
  * - keep bytes array of random length;
  * - allocate memory automatically;
+ * 
+ * notes:
+ * - much slower then std::queue, out of use
  */ 
 
 

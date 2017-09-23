@@ -5,15 +5,15 @@
 #include <string>
 #include <sstream>
 #include <queue>
-
+#include <vector>
+#include <glib.h>
 #include "serializer.h"
 #include "protocol.h"
-#include "queue.h"
 
 using namespace csys;
 
 
-#include <vector>
+
 
 void test_serializer()
 { 
@@ -22,7 +22,7 @@ void test_serializer()
   strcpy(p, "test string");
   float f = 3.141592;
    
-  int n = 11;
+  int n = 17;
   csys::serializer is;
   csys::serializer os;
  
@@ -39,20 +39,26 @@ void test_serializer()
     is.sign_block(block);
   }
   
+  gchar* strEncoded = g_base64_encode((const guchar*)is.buffer_fetch(), is.length());
   is.reset();
 //   is.dump();
-  std::cout << "length: " << is.length() << std::endl;  
+  std::cout << "encoded: " << strEncoded << std::endl;  
   
-  os.buffer_update(is.buffer_fetch(), is.get_size());  
+  gsize lenDecoded;
+  guchar* strDecoded = g_base64_decode(strEncoded, &lenDecoded);
+  g_free(strDecoded);
+  
+  os.buffer_update((const char*)strDecoded, lenDecoded);  
   os.dump();
   
   int ii = 0;
   char cc = 0;
-  char pp[64] = {0};
+  char pp[64];
   float ff = 0;   
   
-  for(int i = 0; i < 12; i ++)
+  for(int i = 0; i < n + 3; i ++)
   {
+    memset(pp, 0x00, sizeof(pp));
     memset(p, 0x00, sizeof(p));
     bool res = os.read_block(p);
     os.deserialize<int>(&ii);
@@ -70,8 +76,9 @@ void test_serializer()
  
 
 }   
-    
-   
+
+// gcc `pkg-config --cflags --libs glib-2.0` features.cpp 
+
 
 void test_std_stream()
 { 
@@ -122,32 +129,6 @@ void test_std_stream()
 }
 
 
-void test_queue()
-{
-  int lim = 1000;
-  csys::queue qu;
-  char p[64];
-  strcpy(p, "test_string");
-  for(int n = 0; n < lim; n++)
-  {
-    p[3] = 0x30 + n;
-    qu.push(p, 11);
-  }
-  
-//   qu.dump();
-  
-  for(int n = 0; n < lim; n++)
-  {
-    char* b;
-    int len;
-    qu.pop(&b, len);
-    if(!b)
-    { std::cout << "empty\n"; continue; }
-//     std::cout << "node: " << len << "\t" << b << std::endl;
-    qu.release_mem(b);
-  }
-}
-
 void test_std_queue()
 {
   int lim = 1000;
@@ -173,10 +154,9 @@ void test_std_queue()
 
 int main()
 {
-//  test_serializer();
+ test_serializer();
 //   test_std_stream();
-//   test_queue();
-  test_std_queue();
+//   test_std_queue();
   
   return 0;
 }

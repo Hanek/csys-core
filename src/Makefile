@@ -35,6 +35,7 @@ SRC_CLIENT= \
 	client/window.cpp\
 	client/tools_cli.cpp\
 	client/journal.cpp\
+	client/discrete.cpp\
 	client/discrete_device_client.cpp\
 	client/analog_device_client.cpp\
 	client/serial_device_client.cpp\
@@ -57,13 +58,13 @@ INCLUDES = 	-I $(SRCDIR)/include \
 			-I $(SRCDIR)/client/include \
 			-I $(SRCDIR)/server/include
 
-CXXFLAGS = -Wall -Wextra ${INCLUDES} `pkg-config gtk+-2.0 --cflags`
+CXXFLAGS = -Wall -Wextra ${INCLUDES} `pkg-config gtk+-2.0 --cflags` `pkg-config --cflags glib-2.0`
 
-CXXFLAGS_SERVER = -Wall -Wextra ${INCLUDES} 
+CXXFLAGS_SERVER = -Wall -Wextra `pkg-config --cflags glib-2.0` ${INCLUDES} 
 
 LDFLAGS = -lm -lrt -lpthread
 
-LDLIBS = `pkg-config gtk+-2.0 --libs`
+LDLIBS = `pkg-config gtk+-2.0 --libs` `pkg-config --libs glib-2.0`
 
 ../obj/client/%.o: %.cpp
 	$(CXX) -DCLIENT $(PRODUCT_FLAGS) $(CXXFLAGS) -c -o $@ $<
@@ -78,7 +79,7 @@ LDLIBS = `pkg-config gtk+-2.0 --libs`
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 ../obj/test/%.o: %.cpp
-	$(CXX) $(CXXFLAGS_SERVER) -c -o $@ $<
+	$(CXX) $(CXXFLAGS_SERVER) `pkg-config --cflags --libs glib-2.0` -c -o $@ $<
 
 debug: client server debug_footer
 
@@ -98,13 +99,13 @@ client_remote: $(OBJ_CLIENT)
 	$(CXX) -o $(BINDIR)$@ $(OBJ_CLIENT) $(LDLIBS) $(LDFLAGS)
 
 server: $(OBJ_SERVER)
-	$(CXX) -o $(BINDIR)$@ $(OBJ_SERVER) $(LDFLAGS)
+	$(CXX) -o $(BINDIR)$@ $(OBJ_SERVER) $(LDFLAGS) `pkg-config --libs glib-2.0`
 
 emul: $(OBJ_EMULATOR)
 	$(CXX) -o $(BINDIR)$@ $(OBJ_EMULATOR) $(LDLIBS) $(LDFLAGS)
 
 test: $(OBJ_TEST)
-	$(CXX) -o $(BINDIR)$@ $(OBJ_TEST) 
+	$(CXX) -o $(BINDIR)$@ $(OBJ_TEST) $(LDLIBS)
 
 
 debug_footer:

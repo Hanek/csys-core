@@ -73,6 +73,11 @@ public:
 public:
   dev(const char* lbl, time tm);
   static void  generic_controller_module(const bool connected);
+
+#ifdef CLIENT
+    /* CLI for device managment */
+
+#endif
 };
 
 typedef std::map<std::string,dev*>::iterator devMapIterator;

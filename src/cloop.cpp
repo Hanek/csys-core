@@ -7,10 +7,10 @@
 #include <iostream>
 
 #include "cloop.h"
-#include "device.h"
+#include "dev.h"
 #include "logger.h"
 #include "fifo.h"
-#include "remote.h"
+#include "transport.h"
 #include "commac.h"
 
 #include "dev.h"
@@ -46,7 +46,7 @@ void cloop::get_time(time& time)
     << errnum << delim << strerror(errnum) << endl;
   }
   cloop::time_global    = time;
-  device::time_global  = time;
+  dev::time_global  = time;
   logger::time_global  = time; 
 }
 
@@ -237,10 +237,10 @@ void cloop::get_connection_info(string& reply, bool connected, bool type)
 
 /*******************************************************************************************/
 
-/*    TODO   interrupt/signal/exception handler    */
+/*    TODO   signal/exception handler    */
 #ifdef SERVER
 
-void cloop::enable(io& sys_io, fifo* ff, remote* eth)
+void cloop::enable(io& sys_io, fifo* ff, transport* eth)
 {
   if(!ff || !eth)
   { cout << __func__<< ": no valid gateway provided!" << endl; exit(1); }
@@ -264,15 +264,16 @@ void cloop::enable(io& sys_io, fifo* ff, remote* eth)
 
     
     /*      job start      */
-    if(!eth->connection)
+//     if(!eth->connection)
     {
-      ff->poll(device::os, device::is);  
-      device::generic_controller_module(sys_io, ff->connection);
+//       ff->poll(dev::os_, dev::is_);  
+//       dev::generic_controller_module(sys_io, ff->connection);
+//       dev::generic_controller_module(ff->connection);
     }
-    else
+//     else
     {
-      eth->poll(device::os, device::is); 
-      device::generic_controller_module(sys_io, eth->connection);
+      eth->poll(dev::os_, dev::is_); 
+      dev::generic_controller_module(eth->connection);
     }
     
     
@@ -312,7 +313,7 @@ void cloop::enable(io& sys_io, fifo* ff, remote* eth)
 
 #ifdef CLIENT
 
-void cloop::enable(fifo* ff, remote* eth)
+void cloop::enable(fifo* ff, transport* eth)
 {
   if(!ff && !eth)
   { cout << __func__ << ": no valid gateway provided!" << endl; exit(1); }
@@ -335,8 +336,8 @@ void cloop::enable(fifo* ff, remote* eth)
       first_cycle = false;
     }
     
-    eth->poll(device::os, device::is); 
-    device::generic_controller_module(eth->connection);
+    eth->poll(dev::os, dev::is); 
+    dev::generic_controller_module(eth->connection);
     /*      job start      */
     
     
@@ -369,8 +370,8 @@ void cloop::enable(fifo* ff, remote* eth)
     }
     
     /*       fifo data transfer     */
-    ff->poll(device::os, device::is); 
-    device::generic_controller_module(ff->connection);
+//     ff->poll(dev::os_, dev::is_); 
+    dev::generic_controller_module(ff->connection);
     /*      job start      */
     
     

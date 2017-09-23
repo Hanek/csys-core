@@ -111,7 +111,7 @@ public:
   void init();
   
   /*   called every scan   */
-  void poll(serializer*, serializer*);
+  void poll(serializer&, serializer&);
 
   bool accept_client();
   void enable_send(); 

@@ -33,6 +33,8 @@ dev(lbl, time::Sec1), pos_(position)
   {
     exit(1);
   }
+  timeout_    = time(time::Sec2);
+  time_redge_ = time_global + timeout_;
 }
 
 dI::~dI()
@@ -64,42 +66,18 @@ void dI::process()
     init_ = true;
   }
   
+  std::cout << label_
+            << "\tstate: " << cs_.state_
+            << std::endl;
+            
+  /* emulate here state flipping */
+  if(time_redge_ < time_global)
+  {
+    cs_.state_ = (cs_.state_) ? false : true;
+    time_redge_ = time_global + timeout_;
+  }
+  
   error_handler();
-  
-  
-//   if(cs_.command != ps_.command)
-//   {
-//     time_redge = time_global;
-//     switch(io_cs.command)
-//     {
-//       case cmd::NOCMD:
-//         break;
-//         
-//       case cmd::CLOSE:
-//         io_cs.do_control = false;
-//         sys_io.rset_do_bit(p_control);
-//         state = device_state::CHANGED;
-//         break;
-//         
-//       case cmd::OPEN:
-//         io_cs.do_control = true;
-//         sys_io.set_do_bit(p_control);
-//         state = device_state::CHANGED;
-//         break;
-//         
-//       case cmd::INIT:
-//         io_cs.do_control = false;
-//         sys_io.rset_do_bit(p_control);
-//         state = device_state::CHANGED;
-//         io_cs.error = err::NOERR;
-//         break;
-//         
-//       default:
-//         break;
-//     }
-//   }
-  
-  
   request_handler();
   
   /*  notify CLIENT that something has changed  */
@@ -113,22 +91,6 @@ void dI::process()
 
 void dI::error_handler()
 {
-//   if(cmd::NOCMD == io_cs.command)
-//   {
-//     /*  close contact bouncing  */
-//     if(io_cs.di_closed != io_ps.di_closed)
-//     { 
-//       state = device_state::ALARM;
-//       io_cs.error = err::EBNCL;
-//     }
-//     
-//     /*  open contact bouncing  */
-//     if(io_cs.di_open != io_ps.di_open)
-//     { 
-//       state = device_state::ALARM;
-//       io_cs.error = err::EBNOP;
-//     }
-//   }  
 }
 
 
@@ -146,7 +108,7 @@ void dI::request_handler()
 
 void dI::serialize()
 {
-  os_.serialize<int>(cs_.error_);
+  os_.serialize<char>(cs_.error_);
   os_.serialize<bool>(cs_.state_);
   os_.sign_block(label_.c_str());
   

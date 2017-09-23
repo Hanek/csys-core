@@ -33,21 +33,33 @@ namespace csys
   private:
     data cs_;
     data ps_;
-    
-    /* input bit position on hw stack */ 
-    int pos_;             
+            
+#ifdef SERVER
+        /* input bit position on hw stack */ 
+    int pos_;     
     
     void error_handler();
     void request_handler();
-  
   public:
     dI(const char *lbl, int position);
+#endif
+    
+#ifdef CLIENT
+  public:
+    dI(const char* lbl);
+    
+    
+#endif
     ~dI();
     void serialize();
     void unserialize();
     bool is_valid() { return (err::NOERR == cs_.error_) ? true : false ; }
     void process();
   };
+  
+  
+  
+  
   
   class dO
   {
@@ -88,6 +100,11 @@ namespace csys
     void unserialize();
     bool is_valid() { return (err::NOERR == cs_.error_) ? true : false ; }
     void process();
+    
+#ifdef CLIENT
+    /* CLI for device managment */
+
+#endif
   };
 };
 #endif

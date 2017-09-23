@@ -19,7 +19,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <sstream>
-
+#include <glib.h>
 #include "transport.h"
 #include "commac.h"
 #include "serializer.h"
@@ -31,12 +31,14 @@ using namespace std;
 using namespace csys;
 
 /*   called on every scan by main app thread   */
-void transport::poll(serializer* os, serializer* is)
+void transport::poll(serializer& os, serializer& is)
 {
-  if(os->length())
+  if(os.length())
   { /*   signal manager   */
     pthread_mutex_lock(&mutex_mngr);
-//     send_queue.push(os.str());
+    gchar* strEncoded = g_base64_encode((const guchar*)is.buffer_fetch(), is.length());
+    send_queue.push(strEncoded);
+    g_free(strEncoded);
     pthread_cond_signal(&cond_mngr);
     pthread_mutex_unlock(&mutex_mngr);
   }
@@ -46,7 +48,10 @@ void transport::poll(serializer* os, serializer* is)
   pthread_mutex_lock(&mutex_recv);
   if(0 != recv_queue.size())
   {/*  copy data to serializer */
-    
+    gsize lenDecoded;
+    guchar* strDecoded = g_base64_decode(recv_queue.front().c_str(), &lenDecoded);
+    os.buffer_update((const char*)strDecoded, lenDecoded);
+    g_free(strDecoded);
 //     is << recv_queue.front();
 //     recv_queue.pop();
   }
@@ -549,7 +554,7 @@ bool transport::accept_client()
   socklen_t len;
   struct sockaddr_storage addr;
   char ipstr[INET6_ADDRSTRLEN];
-  int port;
+//   int port;
   
   len = sizeof addr;
   getpeername(clifd, (struct sockaddr*)&addr, &len);
