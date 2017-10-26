@@ -104,10 +104,11 @@ void dI::request_handler()
 
 
 
-
+int serialize_counter = 0;
 
 void dI::serialize()
 {
+  std::cout << "=================>>>>>> " << __func__ << ": " << serialize_counter++ << std::endl;
   os_.serialize<char>(cs_.error_);
   os_.serialize<bool>(cs_.state_);
   os_.sign_block(label_.c_str());

@@ -57,7 +57,7 @@ private:
   void measure();
   void console_report(std::string& str);
   void timeval_output();
-  void get_connection_info(std::string&, bool, bool);
+  void get_connection_info(std::string&, bool);
 
 public:
   cloop();

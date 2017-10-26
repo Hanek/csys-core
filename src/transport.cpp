@@ -36,11 +36,11 @@ void transport::poll(serializer& os, serializer& is)
   if(os.length())
   { /*   signal manager   */
     pthread_mutex_lock(&mutex_mngr);
-    gchar* strEncoded = g_base64_encode((const guchar*)is.buffer_fetch(), is.length());
+    gchar* strEncoded = g_base64_encode((const guchar*)os.buffer_fetch(), os.length());
     send_queue.push(strEncoded);
     g_free(strEncoded);
     pthread_cond_signal(&cond_mngr);
-    pthread_mutex_unlock(&mutex_mngr);
+    pthread_mutex_unlock(&mutex_mngr); 
   }
   
     
@@ -50,10 +50,13 @@ void transport::poll(serializer& os, serializer& is)
   {/*  copy data to serializer */
     gsize lenDecoded;
     guchar* strDecoded = g_base64_decode(recv_queue.front().c_str(), &lenDecoded);
-    os.buffer_update((const char*)strDecoded, lenDecoded);
+    is.dump();
+    is.buffer_update((const char*)strDecoded, lenDecoded);
+    std::cout << "______________----_________// :" << lenDecoded << std::endl;
+    
+    
     g_free(strDecoded);
-//     is << recv_queue.front();
-//     recv_queue.pop();
+    recv_queue.pop();
   }
   pthread_mutex_unlock(&mutex_recv);
 }
@@ -126,7 +129,6 @@ bool transport::try_send(const char* buf, const int bufLen)
   if(!buf)
   { return false; }
   int res, bytes_sent, len, fd;
-
   
 #ifdef SERVER
   fd = clifd;
@@ -138,7 +140,7 @@ bool transport::try_send(const char* buf, const int bufLen)
 /*   send message length   */
   res = 0;
   len = sizeof(bufLen);
-
+  
   while(true)
   {
     bytes_sent = send(fd, (char*)&bufLen + res, len, MSG_NOSIGNAL);
@@ -271,7 +273,6 @@ void transport::enable_send()
        pthread_mutex_unlock(&mutex_send);
        return;
      }
-     
      send_flag = true;     
      try_send(send_buffer.c_str(), send_buffer.length());
 
@@ -543,11 +544,9 @@ bool transport::accept_client()
     exit(1);
   }
  
-  
   sin_size = sizeof their_addr;
   clifd = accept(sockfd, (struct sockaddr*)&their_addr, &sin_size);
   inet_ntop(their_addr.ss_family, transport_get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
-  
   
   
   /*   extract peer ip and port   */

@@ -228,10 +228,9 @@ void cloop::console_report(string& str)
 }
 
 
-void cloop::get_connection_info(string& reply, bool connected, bool type)
+void cloop::get_connection_info(string& reply, bool connected)
 {
   reply = connected ? "connected\t\t  yes\n" : "connected\t\t  no \n" ;
-  reply = reply + (type ? "client\t\t\t  local   \n" : "client\t\t\t  ethernet\n" );
 }
 
 
@@ -282,22 +281,12 @@ void cloop::enable(io& sys_io, fifo* ff, transport* eth)
     
     
     
-    
     /*     job end        */
     
     get_time(time_jmp);
     measure();
     
-    if(ff->connection)
-    { get_connection_info(reply, true, true); }
-    if(eth->connection)
-    { get_connection_info(reply, true, false); }
-    
-    if(!eth->connection && !ff->connection)
-    {  get_connection_info(reply, false, true); }
-    
-    
-    
+    get_connection_info(reply, eth->connection);
     console_report(reply);
     scanCounter++;
     nsleep(sleep);
@@ -323,7 +312,7 @@ void cloop::enable(fifo* ff, transport* eth)
   
   string reply;
   
-  #ifdef REMOTE
+//   #ifdef REMOTE
   
   while(true)
   { 
@@ -336,7 +325,7 @@ void cloop::enable(fifo* ff, transport* eth)
       first_cycle = false;
     }
     
-    eth->poll(dev::os, dev::is); 
+    eth->poll(dev::os_, dev::is_); 
     dev::generic_controller_module(eth->connection);
     /*      job start      */
     
@@ -346,48 +335,13 @@ void cloop::enable(fifo* ff, transport* eth)
     /*     job end        */
     get_time(time_jmp);
     measure();
-    get_connection_info(reply, eth->connection, false);
-    //       reply = reply + ((eth->connection) ? "connection eth\t\t  true\n" : "connection\t\t  false\n" );
+    get_connection_info(reply, eth->connection);
     console_report(reply);
     scanCounter++;
     nsleep(sleep);
     /* clear streams  */
     reply = "";
-  }
-  
-  
-  #else
-  /*   local   */
-  while(true)
-  {
-    get_time(time_in);
-    if(first_cycle)
-    {
-      time_beg     = time_in;
-      time_jmp     = time_beg;
-      time_pre     = time_beg;
-      first_cycle = false;
-    }
-    
-    /*       fifo data transfer     */
-//     ff->poll(dev::os_, dev::is_); 
-    dev::generic_controller_module(ff->connection);
-    /*      job start      */
-    
-    
-    /*     job end        */  
-    get_time(time_jmp);
-    measure();
-    get_connection_info(reply, ff->connection, true);
-    console_report(reply);
-    scanCounter++;
-    nsleep(sleep);
-    /* clear streams  */
-    reply = "";
-  }
-  
-  #endif
-  
+  }  
 }
 
 #endif

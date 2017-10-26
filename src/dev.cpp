@@ -78,7 +78,7 @@ void dev::generic_controller_module(const bool connected)
   os_.clear();
   
   if(!dmit->second->connection_ && connected)
-  { /*  send device's states to client when connection established */
+  { /*  send device's state to client when connection established */
     for(dmit = deviceMap_.begin(); dmit != deviceMap_.end(); dmit++)
     { 
       dmit->second->process();  
@@ -107,7 +107,6 @@ void dev::generic_controller_module(const bool connected)
 
 
 #ifdef CLIENT
-
 
 
 void dev::generic_controller_module(const bool connected)

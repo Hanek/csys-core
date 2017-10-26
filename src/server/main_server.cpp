@@ -32,7 +32,7 @@ int main()
   
   cloop loop;
   fifo ff(bufferLen);
-  ff.start();
+//   ff.start();
   
   
 //   csys::time comport_frame = csys::time::msSec500;

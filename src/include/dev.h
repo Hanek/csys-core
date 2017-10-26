@@ -50,7 +50,7 @@ protected:
   
 public:
   static     std::map<std::string,dev*> deviceMap_;
-  /*  true when layer connected   */
+  /*  true when client connected   */
   static     bool connection_;   
   static     bool session_;
   /*   request to send, SAME AS emit !!   */

@@ -59,7 +59,7 @@ void dI::process()
 
 void dI::serialize()
 {
-   
+     
 }
 
 
@@ -67,6 +67,8 @@ void dI::unserialize()
 {
   os_.deserialize<char>(&cs_.error_);
   os_.deserialize<bool>(&cs_.state_);
+  
+  std::cout << __func__ << ":state: " << cs_.state_ << std::endl;
 }
 
 

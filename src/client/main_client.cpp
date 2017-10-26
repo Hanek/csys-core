@@ -6,7 +6,7 @@
 // #include "discrete_device.h"
 // #include "serial_device.h"
 // #include "analog_device.h"
-#include "window.h"
+// #include "window.h"
 // #include "journal.h"
 #include "transport.h"
 // #include "tools.h"
@@ -36,10 +36,11 @@ int main(int argc, char** argv)
   dI di2("di2");
   dI di3("di3");
   dI di4("di4");
- 
   
-  fifo ff(bufferLen);
-  ff.start();
+  
+  
+//   fifo ff(bufferLen);
+//   ff.start();
   
   loop.enable(NULL, &eth);
 

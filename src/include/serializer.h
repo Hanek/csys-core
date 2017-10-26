@@ -48,7 +48,10 @@ namespace csys
     
     /* size of buffer */
     size_t size_;
-    /* length of dev_id header */
+    /* 
+     * length of dev_id header
+     * must be the same for each user  
+     */
     const size_t hlen_;
     
     void out_of_mem()
@@ -72,7 +75,7 @@ namespace csys
       pos_ = buf_ + shift1;
       beg_ = buf_ + shift2;
             
-      std::cout << "out_of_mem: " << size_ << std::endl;
+//       std::cout << "out_of_mem: " << size_ << std::endl;
     }
     
     void realloc(size_t sizein)
@@ -100,7 +103,7 @@ namespace csys
     
   
   public:
-    serializer(): size_(32), hlen_(4) 
+    serializer(): size_(128), hlen_(4) 
     { 
       buf_  = (char*)malloc(size_);
       if(!buf_)
