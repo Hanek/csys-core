@@ -125,8 +125,20 @@ void dev::generic_controller_module(const bool connected)
       memset(devLabel, 0x00, sizeof(devLabel));
       continue; 
     }
+    std::cout << devLabel << ": \n"; 
     dmit->second->unserialize();
     memset(devLabel, 0x00, sizeof(devLabel));
+  }
+  
+  for(dmit = deviceMap_.begin(); dmit != deviceMap_.end(); dmit++)
+  {
+    dmit->second->process();
+    
+    if(dmit->second->emit_ && connected)
+    {
+      dmit->second->serialize(); 
+      dmit->second->reset_emit();
+    }
   }
   
   

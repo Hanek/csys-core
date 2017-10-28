@@ -63,6 +63,8 @@ public:
   time&       get_tm() { return timeout_; }
   /*  keeps time fetched with last cloop::get_time() call, always equals cloop::time_global  */
   static time time_global;
+  void set_emit() { emit_   = true; }
+  void reset_emit() { emit_ = false; }
   
   virtual void process()     = 0;
   virtual void serialize()   = 0;

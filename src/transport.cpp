@@ -50,10 +50,12 @@ void transport::poll(serializer& os, serializer& is)
   {/*  copy data to serializer */
     gsize lenDecoded;
     guchar* strDecoded = g_base64_decode(recv_queue.front().c_str(), &lenDecoded);
-    is.dump();
-    is.buffer_update((const char*)strDecoded, lenDecoded);
-    std::cout << "______________----_________// :" << lenDecoded << std::endl;
     
+    is.buffer_update((const char*)strDecoded, lenDecoded);
+    is.dump();
+    std::cout << "______// :" << lenDecoded << std::endl;
+    std::cout << "______// :" << strDecoded << std::endl;
+    std::cout << "______// :" << recv_queue.front() << std::endl;
     
     g_free(strDecoded);
     recv_queue.pop();
@@ -303,6 +305,8 @@ void transport::enable_recv()
        return;
      }
      recv_buffer = buff;
+     
+     
       
 
      pthread_mutex_lock(&mutex_recv);

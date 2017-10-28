@@ -2,15 +2,7 @@
 #include <pthread.h>
 
 #include "cloop.h"
-#include "fifo.h"
-// #include "discrete_device.h"
-// #include "serial_device.h"
-// #include "analog_device.h"
-// #include "window.h"
-// #include "journal.h"
 #include "transport.h"
-// #include "tools.h"
-
 #include "discrete.h"
 
 using namespace csys;
@@ -37,13 +29,7 @@ int main(int argc, char** argv)
   dI di3("di3");
   dI di4("di4");
   
-  
-  
-//   fifo ff(bufferLen);
-//   ff.start();
-  
-  loop.enable(NULL, &eth);
-
+  loop.enable(&eth);
   
   return 0;
 }

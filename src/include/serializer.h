@@ -54,10 +54,11 @@ namespace csys
      */
     const size_t hlen_;
     
-    void out_of_mem()
+    void out_of_mem(size_t sizein)
     {
-      /* realloc preserving old data */  
-      size_ *= 2;
+      /* realloc preserving old data */
+      
+      size_ = (sizein) ? sizein + 1 : 2*size_;
       size_t shift1 = pos_ - buf_;
       size_t shift2 = beg_ - buf_;
       char* buf_new;
@@ -103,7 +104,7 @@ namespace csys
     
   
   public:
-    serializer(): size_(128), hlen_(4) 
+    serializer(): size_(32), hlen_(4) 
     { 
       buf_  = (char*)malloc(size_);
       if(!buf_)
@@ -126,7 +127,7 @@ namespace csys
     void buffer_update(const char* bufin, size_t sizein)
     {
       if(size_ <= sizein)
-      { realloc(sizein); }
+      { out_of_mem(sizein); }
       memcpy(buf_, bufin, sizein);
       message_len_ = (int)sizein;
     }
@@ -155,7 +156,7 @@ namespace csys
       memcpy(beg_ + hlen_, &block_len_, sizeof(block_len_));
       beg_ = pos_;
       if(size_ - (pos_ - buf_) <= (hlen_ + sizeof(block_len_)))
-      { out_of_mem(); }
+      { out_of_mem(0); }
       pos_ += hlen_ + sizeof(block_len_);
     }
     
@@ -179,7 +180,7 @@ namespace csys
     void serialize_cstring(const char* str) 
     { 
       if(strlen(str) >= size_ - (pos_ - buf_) - 1) 
-      { out_of_mem(); }
+      { out_of_mem(0); }
       
       memcpy(pos_, str, strlen(str)); 
       pos_ += strlen(str); 
@@ -197,7 +198,7 @@ namespace csys
     { 
       if(sizeof(T) >= size_ - (pos_ - buf_)) 
       { 
-        out_of_mem(); 
+        out_of_mem(0); 
       }
       
       

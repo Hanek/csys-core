@@ -9,7 +9,6 @@
 #include "cloop.h"
 #include "dev.h"
 #include "logger.h"
-#include "fifo.h"
 #include "transport.h"
 #include "commac.h"
 
@@ -239,10 +238,10 @@ void cloop::get_connection_info(string& reply, bool connected)
 /*    TODO   signal/exception handler    */
 #ifdef SERVER
 
-void cloop::enable(io& sys_io, fifo* ff, transport* eth)
+void cloop::enable(io& sys_io, transport* eth)
 {
-  if(!ff || !eth)
-  { cout << __func__<< ": no valid gateway provided!" << endl; exit(1); }
+  if(!eth)
+  { cerr << __func__<< ": no transport provided!" << endl; exit(1); }
   
   
   string reply;
@@ -260,20 +259,11 @@ void cloop::enable(io& sys_io, fifo* ff, transport* eth)
     
     /*  IO refresh  */ 
     sys_io.io_update();
-
+    /* data interchange and dispatch */
+    eth->poll(dev::os_, dev::is_); 
+    dev::generic_controller_module(eth->connection);
     
     /*      job start      */
-//     if(!eth->connection)
-    {
-//       ff->poll(dev::os_, dev::is_);  
-//       dev::generic_controller_module(sys_io, ff->connection);
-//       dev::generic_controller_module(ff->connection);
-    }
-//     else
-    {
-      eth->poll(dev::os_, dev::is_); 
-      dev::generic_controller_module(eth->connection);
-    }
     
     
     
@@ -282,7 +272,6 @@ void cloop::enable(io& sys_io, fifo* ff, transport* eth)
     
     
     /*     job end        */
-    
     get_time(time_jmp);
     measure();
     
@@ -302,18 +291,12 @@ void cloop::enable(io& sys_io, fifo* ff, transport* eth)
 
 #ifdef CLIENT
 
-void cloop::enable(fifo* ff, transport* eth)
+void cloop::enable(transport* eth)
 {
-  if(!ff && !eth)
-  { cout << __func__ << ": no valid gateway provided!" << endl; exit(1); }
-  
-  if(ff && eth)
-  { cout << __func__ << ": too many gateways provided!" << endl; exit(1); }
-  
-  string reply;
-  
-//   #ifdef REMOTE
-  
+  if(!eth)
+  { cerr << __func__<< ": no transport provided!" << endl; exit(1); }
+
+  string reply;  
   while(true)
   { 
     get_time(time_in);
@@ -325,6 +308,7 @@ void cloop::enable(fifo* ff, transport* eth)
       first_cycle = false;
     }
     
+    /* data interchange and dispatch */
     eth->poll(dev::os_, dev::is_); 
     dev::generic_controller_module(eth->connection);
     /*      job start      */

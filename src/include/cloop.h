@@ -26,7 +26,6 @@ namespace csys
   
 /*  cloop used to maintain scan time of loop execution, measure latency and performance */ 
 
-class fifo;
 class io;
 class transport;
 
@@ -71,11 +70,11 @@ public:
   time& pTime() { return time_jmp; }
   
 #ifdef SERVER
-  void enable(io& sys_io, fifo* ff, transport* eth);
+  void enable(io& sys_io, transport* eth);
 #endif	
 
 #ifdef CLIENT
-  void enable(fifo* ff, transport* eth);
+  void enable(transport* eth);
 #endif
 
 };

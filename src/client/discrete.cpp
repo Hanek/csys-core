@@ -52,7 +52,9 @@ dI::~dI()
 
 void dI::process()
 {
- 
+ std::cout << label_
+            << "\tstate: " << cs_.state_
+            << std::endl;
 }
 
 
@@ -65,10 +67,10 @@ void dI::serialize()
 
 void dI::unserialize()
 {
-  os_.deserialize<char>(&cs_.error_);
-  os_.deserialize<bool>(&cs_.state_);
+  is_.deserialize<char>(&cs_.error_);
+  is_.deserialize<bool>(&cs_.state_);
   
-  std::cout << __func__ << ":state: " << cs_.state_ << std::endl;
+//   std::cout << __func__ << ":state: " << cs_.state_ << std::endl;
 }
 
 

@@ -58,9 +58,9 @@ INCLUDES = 	-I $(SRCDIR)/include \
 			-I $(SRCDIR)/client/include \
 			-I $(SRCDIR)/server/include
 
-CXXFLAGS = -Wall -Wextra ${INCLUDES} `pkg-config gtk+-2.0 --cflags` `pkg-config --cflags glib-2.0`
+CXXFLAGS = -Wall -Wextra -ggdb ${INCLUDES} `pkg-config gtk+-2.0 --cflags` `pkg-config --cflags glib-2.0`
 
-CXXFLAGS_SERVER = -Wall -Wextra `pkg-config --cflags glib-2.0` ${INCLUDES} 
+CXXFLAGS_SERVER = -Wall -Wextra -ggdb `pkg-config --cflags glib-2.0` ${INCLUDES} 
 
 LDFLAGS = -lm -lrt -lpthread
 
