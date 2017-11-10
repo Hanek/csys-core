@@ -18,6 +18,7 @@
 #include <map>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sstream>
 #include "timespec.h"
 #include "serializer.h"
@@ -46,7 +47,8 @@ protected:
   /* define poll interval */
   time       timeout_;   
   /*  0.00...1.00  */
-  float      tolerance_;             
+  
+  float      tolerance_;
   
 public:
   static     std::map<std::string,dev*> deviceMap_;
@@ -77,8 +79,24 @@ public:
   static void  generic_controller_module(const bool connected);
 
 #ifdef CLIENT
-    /* CLI for device managment */
+  static void generic_command_module();
+  /* temporary container to store device state on first arrival */
+  static std::vector<std::string> devNewborn_;
 
+private:
+  /* synchronization between main loop and gui done with this lock */
+  pthread_mutex_t lock_; 
+  /* raised every time unserialize() called, time_handler() doesn't update widget otherwise */
+  bool  update_flag_; 
+
+public:
+  static void  populate_widgets();
+  virtual void build_widget() = 0;
+  
+  pthread_mutex_t* get_lock() { return &lock_; }
+  bool get_update_flag() { return update_flag_; }
+  void set_update_flag() { update_flag_ = true; }
+  void reset_update_flag() { update_flag_ = false; }
 #endif
 };
 

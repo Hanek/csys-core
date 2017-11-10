@@ -17,12 +17,16 @@
 #include <cstdlib>
 #include <sstream>
 
+#include "window.h"
 #include "discrete.h"
 #include "io.h"
 #include "commac.h"
 
 using namespace std;
 using namespace csys;
+
+window* dI::widget::pWin_ = &window::instance();
+
 
 dI::dI(const char *lbl): 
 dev(lbl, time::Sec1)
@@ -39,12 +43,11 @@ dI::~dI()
 {
   devMapIterator it = deviceMap_.find(label_);
   
-  if(it == deviceMap_.end())
-  {
-    return;
+  if(it != deviceMap_.end())
+  { 
+    delete(it->second);
+    deviceMap_.erase(it); 
   }
-  else
-  { deviceMap_.erase(it); }
   
 }
 
@@ -69,9 +72,147 @@ void dI::unserialize()
 {
   is_.deserialize<char>(&cs_.error_);
   is_.deserialize<bool>(&cs_.state_);
-  
-//   std::cout << __func__ << ":state: " << cs_.state_ << std::endl;
 }
+
+
+
+
+void dI::build_widget()
+{
+  widget_ = new widget(this);
+}
+
+
+
+
+
+
+/********************* gui **********************/
+
+
+gboolean dI::widget::time_handler(widget* pWid)
+{
+  if(!pWid)
+  {return false;}
+  
+  dI& diRef  = *pWid->obj_;
+  
+  pthread_mutex_lock(diRef.get_lock());
+  if(!diRef.get_update_flag())
+  {
+    pthread_mutex_unlock(diRef.get_lock());
+    return true;
+  }
+  
+  if(!diRef.get_data().state_)
+  { gtk_image_set_from_file((GtkImage*)pWid->bitState_, UIPATH"bs1_grey.png"); }
+  else
+  { gtk_image_set_from_file((GtkImage*)pWid->bitState_, UIPATH"bs1_green.png"); }
+    
+  diRef.reset_update_flag();
+  pthread_mutex_unlock(diRef.get_lock());
+  
+  return true;
+}
+
+
+void dI::widget::init(GtkWidget* pWid, gpointer pVal)
+{
+  if(!pWid || !pVal)
+  {return;}
+  
+  dI& diRef = *((widget*)pVal)->obj_;
+  
+  pthread_mutex_lock(diRef.get_lock());
+//  diRef.get_data().command = cmd::INIT;
+  diRef.set_emit();
+  pthread_mutex_unlock(diRef.get_lock());
+}
+
+/*        TODO  
+ *   REVIEW TO ENSURE PROPER CLEANUP
+ */
+gint dI::widget::delete_event(GtkWidget *pWid, GdkEvent  *event, gpointer pVal)
+{
+  if(!pWid || !event || !pVal)
+  {}
+  //   discreteDevice& valRef = *((widget*)pVal)->pObj;
+  //   valRef.~discreteDevice();
+  cout << "delete_event" << endl;
+  
+  return(FALSE);
+}
+
+
+
+dI::widget::widget(dI* pDev)
+{  
+  if(!pDev)
+  { exit(1); }
+  
+  obj_ = pDev;
+  gint discreteDeviceImWidth     = pWin_->iconWidth;
+  gint usize                     = pWin_->usize;
+  gint buttonWidth               = pWin_->buttonWidth;
+  gint buttonHeight              = pWin_->buttonHeight;
+  gint stateWidth                = pWin_->controlsWidth - discreteDeviceImWidth - 36;  // controls whole widget width
+  gdouble alignVal               = 0.5;
+  gint col1                      = 8;
+  gint col2                      = col1 + pWin_->tboxHeight;
+  gint col3                      = col1 + stateWidth - buttonWidth;;
+  gint row0                      = 8;
+  gint row                       =  row0 + usize + 2;
+  gint step1                     = usize;
+  gint step2                     = usize + 10;
+  gint valv_col = pWin_->controlsWidth - discreteDeviceImWidth - 26;
+   
+  frame_ = gtk_frame_new (NULL);
+  gtk_box_pack_start (GTK_BOX (pWin_->discreteVbox), frame_, FALSE, FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (frame_), 0);
+  gtk_frame_set_shadow_type(GTK_FRAME(frame_), GTK_SHADOW_ETCHED_OUT);
+  gtk_container_set_border_width (GTK_CONTAINER (frame_), 2);
+  gtk_frame_set_label_align (GTK_FRAME (frame_), 0.5, 0.36);
+  
+  label_ = gtk_label_new (obj_->get_label().c_str());
+  gtk_frame_set_label_widget (GTK_FRAME (frame_), label_);
+  gtk_misc_set_alignment (GTK_MISC (label_), 0, 0);
+  
+  align_ = gtk_alignment_new (0, 0, 1, 1);
+  gtk_container_add (GTK_CONTAINER (frame_), align_);
+  
+  fixed_ = gtk_fixed_new ();
+  gtk_container_add (GTK_CONTAINER (align_), fixed_);
+  
+  /*   first column   */
+  gint im_shift = 4;
+  bitState_ = gtk_image_new_from_file(UIPATH"bs1_grey.png");
+  gtk_fixed_put (GTK_FIXED (fixed), bitState_, col1, row);
+  gtk_misc_set_alignment (GTK_MISC (bitState_), alignVal, alignVal);
+  gtk_widget_set_size_request (bitState_, usize, usize + im_shift);
+  
+  g_timeout_add(200, (GSourceFunc) time_handler, (gpointer) this);
+  gtk_signal_connect (GTK_OBJECT (pWin_->mainWindow), "delete_event", GTK_SIGNAL_FUNC (delete_event), (gpointer)this);
+  time_handler(this);
+}
+
+
+
+const char* dI::widget::get_state_string()
+{
+  switch(obj_->get_data().error_)
+  {
+    case err::NOERR:
+      break;
+      
+    case err::HWERR:
+      return "hw error";
+      
+    default:
+      break;
+  }
+  return "";
+}
+
 
 
 

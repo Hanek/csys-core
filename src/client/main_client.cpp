@@ -3,7 +3,6 @@
 
 #include "cloop.h"
 #include "transport.h"
-#include "discrete.h"
 
 using namespace csys;
 using namespace std;
@@ -21,14 +20,7 @@ int main(int argc, char** argv)
   
   transport eth(argv[1], bufferLen);
   eth.init();
-  
-  cloop loop;
-  
-  dI di1("di1");
-  dI di2("di2");
-  dI di3("di3");
-  dI di4("di4");
-  
+  cloop loop;  
   loop.enable(&eth);
   
   return 0;

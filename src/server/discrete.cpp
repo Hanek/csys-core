@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include "discrete.h"
+#include "protocol.h"
 #include "io.h"
 #include "commac.h"
 
@@ -27,13 +28,14 @@ using namespace csys;
 dI::dI(const char *lbl, int position): 
 dev(lbl, time::Sec1), pos_(position)
 {
+  prot::type::AI;
   pair<devMapIterator, bool> ret;
   ret = deviceMap_.insert(pair<string, dev*>(label_, this));
   if (false == ret.second) 
   {
     exit(1);
   }
-  timeout_    = time(time::Sec2);
+  timeout_    = time(time::Sec1);
   time_redge_ = time_global + timeout_;
 }
 
@@ -41,13 +43,11 @@ dI::~dI()
 {
   devMapIterator it = deviceMap_.find(label_);
   
-  if(it == deviceMap_.end())
-  {
-    return;
+  if(it != deviceMap_.end())
+  { 
+    delete(it->second);
+    deviceMap_.erase(it); 
   }
-  else
-  { deviceMap_.erase(it); }
-  
 }
 
 
@@ -65,10 +65,6 @@ void dI::process()
   {
     init_ = true;
   }
-  
-  std::cout << label_
-            << "\tstate: " << cs_.state_
-            << std::endl;
             
   /* emulate here state flipping */
   if(time_redge_ < time_global)
@@ -101,14 +97,8 @@ void dI::request_handler()
 }
 
 
-
-
-
-int serialize_counter = 0;
-
 void dI::serialize()
 {
-  std::cout << "=================>>>>>> " << __func__ << ": " << serialize_counter++ << std::endl;
   os_.serialize<char>(cs_.error_);
   os_.serialize<bool>(cs_.state_);
   os_.sign_block(label_.c_str());

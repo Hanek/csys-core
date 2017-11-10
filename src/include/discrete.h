@@ -2,12 +2,21 @@
 #include <string.h>
 #include "dev.h"
 
+
+#ifdef CLIENT
+#include <gtk/gtk.h>
+#endif
+
 #ifndef _DISCRETE_H
 #define _DISCRETE_H
 
 
 namespace csys
 {
+  #ifdef CLIENT
+  class window;
+  #endif
+
   class dI : public dev
   {
   public:
@@ -47,6 +56,33 @@ namespace csys
 #ifdef CLIENT
   public:
     dI(const char* lbl);
+    void build_widget();
+  
+  private:
+    class widget
+    {
+    private:
+      dI* obj_;
+      static window* pWin_;
+      
+      GtkWidget *frame_;
+      GtkWidget *align_;
+      GtkWidget *fixed_;
+      
+      GtkWidget *bitState_;
+      GtkWidget *label_;
+      
+      static gboolean time_handler(widget* pWid);
+      static void init(GtkWidget* pWid, gpointer pVal);
+      static gint delete_event(GtkWidget *pWid, GdkEvent  *event, gpointer pVal);
+      const char* get_state_string();
+    
+    public:
+      widget(dI* p);
+    };
+  
+  private:
+    widget* widget_;
     
     
 #endif
@@ -55,6 +91,7 @@ namespace csys
     void unserialize();
     bool is_valid() { return (err::NOERR == cs_.error_) ? true : false ; }
     void process();
+    struct data& get_data() { return cs_; }
   };
   
   

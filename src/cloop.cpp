@@ -11,8 +11,7 @@
 #include "logger.h"
 #include "transport.h"
 #include "commac.h"
-
-#include "dev.h"
+#include "discrete.h"
 
 #ifdef SERVER
 #include "io.h"
@@ -52,9 +51,9 @@ void cloop::get_time(time& time)
 
 cloop::cloop() 
 { 
-  crep                   = false;
-  first_cycle          = true;
-  error                  = false;
+  crep         = false;
+  first_cycle  = true;
+  error        = false;
   
   get_time(time_beg);
   time_beg.reset();  
@@ -291,6 +290,19 @@ void cloop::enable(io& sys_io, transport* eth)
 
 #ifdef CLIENT
 
+
+void instantiate_devices(std::vector<std::string>& devNewborn)
+{
+  std::vector<std::string>::iterator it;
+  for(it = devNewborn.begin(); it != devNewborn.end(); it++)
+  {
+    new dI(it->c_str());
+  }
+  devNewborn.clear();
+}
+
+
+
 void cloop::enable(transport* eth)
 {
   if(!eth)
@@ -310,9 +322,11 @@ void cloop::enable(transport* eth)
     
     /* data interchange and dispatch */
     eth->poll(dev::os_, dev::is_); 
-    dev::generic_controller_module(eth->connection);
+  dev::generic_controller_module(eth->connection);
+    if(!dev::devNewborn_.empty())
+    { instantiate_devices(dev::devNewborn_); }
+    dev::generic_command_module();
     /*      job start      */
-    
     
     
     

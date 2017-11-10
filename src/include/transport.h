@@ -42,9 +42,18 @@ namespace csys
   
   class transport
   {
+  /*
+   *  SERVER         PROXY             CLIENT
+   *  manager        manager 
+   *  sender    ---> receiver
+   *  receiver  <--- sender
+   *                 dispatcher <---->
+   */
 private:
-  /*   server: listen on sockfd  */  
-  /*   client:  connect on sockfd   */ 
+  /*   
+   * server: listen on sockfd 
+   * client:  connect on sockfd   
+   */ 
   int                        sockfd;
   int                        rv;
   char                       s[INET6_ADDRSTRLEN];

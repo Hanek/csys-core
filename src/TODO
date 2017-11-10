@@ -1,9 +1,6 @@
 
-- c-style serializer
-- c-style logger
-- IO hardware emulator
-- serial port emulator
-- adaptive window
-- plotter
 
+- c-style logger
+- cli interface
+- web interface
 

@@ -12,17 +12,15 @@ using namespace csys;
 
 int main()
 { 
-   
   int bufferLen = 2048;
   
   transport eth(bufferLen); 
-//   eth.init();
-  exit(0);
+  eth.init();  
  
   io sys_io;
   cloop loop;
   
-  dI di1("di1", 0);
+  new dI("di1", 0);
   dI di2("di2", 1);
   dI di3("di3", 0);
   dI di4("di4", 1);
@@ -30,7 +28,7 @@ int main()
 
   
   loop.enable(sys_io, &eth);
-  
+//  
  return 0; 
 }
 

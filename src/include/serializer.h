@@ -29,7 +29,7 @@ namespace csys
  *    | cstring | size_t|  int  |   cstring   |     float     |
  *    |s i g n a t u r e|          b l o c k   b o d y        |
  *
- *    beg  - points to the begininng of the block
+ *    beg  - points to the beginning of the block
  *    len  - message length
  *    hlen - length of dev_id
  */
@@ -78,30 +78,6 @@ namespace csys
             
 //       std::cout << "out_of_mem: " << size_ << std::endl;
     }
-    
-    void realloc(size_t sizein)
-    {
-      /* plain realloc  */
-      size_ = sizein;
-      char* buf_new;
-      buf_new = (char*)malloc(size_);
-      if(!buf_new)
-      { 
-        char err[64] = {0};
-        sprintf(err, "[%s] malloc failed: %s\n", __func__, strerror(errno)); 
-        fwrite(err, 1, strlen(err), stderr);
-      }
-      free(buf_);
-      buf_ = buf_new;
-      
-      memset(buf_, 0x00, size_);                                     
-      pos_       = buf_ + hlen_ + sizeof(block_len_); 
-      beg_       = buf_;
-      block_len_ = 0;
-      head_      = true;     
-      std::cout << "realloc: " << size_ << std::endl;
-    }
-    
   
   public:
     serializer(): size_(32), hlen_(4) 

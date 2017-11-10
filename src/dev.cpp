@@ -26,7 +26,7 @@ using namespace csys;
 bool dev::connection_ = false;
 bool dev::session_    = false;
 map<string,dev*> dev::deviceMap_;
-
+  
 csys::time dev::time_global(false);
 
 serializer dev::os_;
@@ -108,6 +108,7 @@ void dev::generic_controller_module(const bool connected)
 
 #ifdef CLIENT
 
+std::vector<std::string> dev::devNewborn_;
 
 void dev::generic_controller_module(const bool connected)
 {
@@ -122,10 +123,11 @@ void dev::generic_controller_module(const bool connected)
     
     if(dmit == deviceMap_.end())
     {
+      /* device is not registered */
+      devNewborn_.push_back(devLabel);
       memset(devLabel, 0x00, sizeof(devLabel));
       continue; 
     }
-    std::cout << devLabel << ": \n"; 
     dmit->second->unserialize();
     memset(devLabel, 0x00, sizeof(devLabel));
   }
@@ -145,6 +147,22 @@ void dev::generic_controller_module(const bool connected)
   is_.clear();
   os_.clear();
 }
+
+
+void dev::generic_command_module()
+{
+  /* provide access to system devices */
+    
+}
+
+
+void dev::populate_widgets()
+{
+  devMapIterator dmit;
+  for(dmit = dev::deviceMap_.begin(); dmit != dev::deviceMap_.end(); dmit++)
+  { dmit->second->build_widget(); }
+}
+
 
 #endif
 

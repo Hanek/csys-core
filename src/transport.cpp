@@ -53,10 +53,6 @@ void transport::poll(serializer& os, serializer& is)
     
     is.buffer_update((const char*)strDecoded, lenDecoded);
     is.dump();
-    std::cout << "______// :" << lenDecoded << std::endl;
-    std::cout << "______// :" << strDecoded << std::endl;
-    std::cout << "______// :" << recv_queue.front() << std::endl;
-    
     g_free(strDecoded);
     recv_queue.pop();
   }
@@ -79,7 +75,8 @@ transport::~transport()
   close(sockfd);
    
 #ifdef SERVER  
-  close(clifd); 
+  if(connection)
+  { close(clifd); }
 #endif
   pthread_exit(NULL);
 }
