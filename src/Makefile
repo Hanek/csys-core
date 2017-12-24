@@ -10,7 +10,6 @@ SRC_COMMON = \
 	logger.cpp\
 	timespec.cpp\
 	cloop.cpp\
-	device.cpp\
 	dev.cpp\
 	fifo.cpp\
 	remote.cpp\
@@ -23,22 +22,13 @@ SRC_SERVER= \
 	server/serial.cpp\
 	server/io.cpp\
 	server/discrete.cpp\
-	server/discrete_device_server.cpp\
-	server/analog_device_server.cpp\
-	server/serial_device_server.cpp\
-	server/tools_srv.cpp\
 	server/main_server.cpp
 
 SRC_CLIENT= \
 	$(SRC_COMMON)\
 	client/fifo_client.cpp\
 	client/window.cpp\
-	client/tools_cli.cpp\
-	client/journal.cpp\
 	client/discrete.cpp\
-	client/discrete_device_client.cpp\
-	client/analog_device_client.cpp\
-	client/serial_device_client.cpp\
 	client/main_client.cpp
 
 SRC_EMULATOR= \

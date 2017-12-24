@@ -51,11 +51,13 @@ namespace csys
     void request_handler();
   public:
     dI(const char *lbl, int position);
+    ~dI();
 #endif
     
 #ifdef CLIENT
   public:
     dI(const char* lbl);
+    ~dI();
     void build_widget();
   
   private:
@@ -68,7 +70,7 @@ namespace csys
       GtkWidget *frame_;
       GtkWidget *align_;
       GtkWidget *fixed_;
-      
+           
       GtkWidget *bitState_;
       GtkWidget *label_;
       
@@ -86,7 +88,6 @@ namespace csys
     
     
 #endif
-    ~dI();
     void serialize();
     void unserialize();
     bool is_valid() { return (err::NOERR == cs_.error_) ? true : false ; }

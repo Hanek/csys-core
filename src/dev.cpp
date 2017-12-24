@@ -42,11 +42,18 @@ dev::dev(const char* lbl, time tm): label_(lbl), timeout_(tm)
   
   if(!session_)
   { session_ = true; }
+  
+#ifdef CLIENT
+  pthread_mutex_init(&lock_, NULL);
+#endif
 }
 
 
 dev::~dev() 
 {
+#ifdef CLIENT
+  pthread_mutex_destroy(&lock_);
+#endif
 };
 
 

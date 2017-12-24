@@ -22,37 +22,15 @@ class window
 {
 public:
   static window& instance();
-  gint width, height, mnemoWidth, mnemoHeight,
-         dataWidth, dataHeight, controlsWidth, controlsHeight,
-         lockersWidth, lockersHeight;
+  gint width_, height_, controlsWidth_, controlsHeight_;
          
-  gint iconWidth, iconHeight, buttonWidth, buttonHeight,
+  gint iconWidth_, iconHeight_, buttonWidth, buttonHeight,
          labelWidth, labelHeight, usize, tboxWidth, tboxHeight;
   
   
   GtkWidget *mainWindow;
   GtkWidget *layoutMain;
   GtkSettings *settings;
-  
-  /*************MnemoSchema************************/
-  GtkWidget *mnemoFrame;
-  GtkWidget *mnemoAlignment;
-  GtkWidget *mnemoFixed;
-  GtkWidget *mnemoLabel;
-  
-  /****************RT Data*********************/
-  
-  GtkWidget *rtNbook;
-  GtkWidget *logLabel;
-  GtkWidget *logVbox;  
-  GtkWidget *plotLabel;
-  GtkWidget *plotVbox;
-  
-  /****************Lockers*********************/
-  
-  GtkWidget *lockersFrame;
-  GtkWidget *lockersAlignment;
-  GtkWidget *lockersLabel;
   
   /*****************Controls********************/
   
@@ -72,6 +50,7 @@ public:
   GtkWidget *discreteViewport;
   GtkWidget *discreteVbox;
   GtkWidget *discreteLabel;
+  GtkWidget* discreteTable_;
   
   GtkWidget *serialScrolledWindow;
   GtkWidget *serialViewport;

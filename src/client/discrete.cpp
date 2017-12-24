@@ -72,6 +72,9 @@ void dI::unserialize()
 {
   is_.deserialize<char>(&cs_.error_);
   is_.deserialize<bool>(&cs_.state_);
+  
+  set_update_flag();
+  pthread_mutex_unlock(get_lock());
 }
 
 
@@ -94,7 +97,7 @@ gboolean dI::widget::time_handler(widget* pWid)
 {
   if(!pWid)
   {return false;}
-  
+                                                                                                                          
   dI& diRef  = *pWid->obj_;
   
   pthread_mutex_lock(diRef.get_lock());
@@ -143,55 +146,47 @@ gint dI::widget::delete_event(GtkWidget *pWid, GdkEvent  *event, gpointer pVal)
   return(FALSE);
 }
 
-
+int i = 0;
+int j = 0;
 
 dI::widget::widget(dI* pDev)
 {  
   if(!pDev)
   { exit(1); }
   
-  obj_ = pDev;
-  gint discreteDeviceImWidth     = pWin_->iconWidth;
-  gint usize                     = pWin_->usize;
-  gint buttonWidth               = pWin_->buttonWidth;
-  gint buttonHeight              = pWin_->buttonHeight;
-  gint stateWidth                = pWin_->controlsWidth - discreteDeviceImWidth - 36;  // controls whole widget width
-  gdouble alignVal               = 0.5;
-  gint col1                      = 8;
-  gint col2                      = col1 + pWin_->tboxHeight;
-  gint col3                      = col1 + stateWidth - buttonWidth;;
-  gint row0                      = 8;
-  gint row                       =  row0 + usize + 2;
-  gint step1                     = usize;
-  gint step2                     = usize + 10;
-  gint valv_col = pWin_->controlsWidth - discreteDeviceImWidth - 26;
+  obj_             = pDev;
+  gint usize       = pWin_->usize;
+  gdouble alignVal = 0.5;
    
-  frame_ = gtk_frame_new (NULL);
-  gtk_box_pack_start (GTK_BOX (pWin_->discreteVbox), frame_, FALSE, FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame_), 0);
-  gtk_frame_set_shadow_type(GTK_FRAME(frame_), GTK_SHADOW_ETCHED_OUT);
-  gtk_container_set_border_width (GTK_CONTAINER (frame_), 2);
-  gtk_frame_set_label_align (GTK_FRAME (frame_), 0.5, 0.36);
+  frame_ = gtk_frame_new(NULL);
   
+  gtk_box_pack_start(GTK_BOX(pWin_->discreteVbox), frame_, FALSE, FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(frame_), 0);
+  gtk_frame_set_shadow_type(GTK_FRAME(frame_), GTK_SHADOW_ETCHED_OUT);
+  gtk_container_set_border_width(GTK_CONTAINER(frame_), 2);
+  gtk_frame_set_label_align(GTK_FRAME(frame_), 0.5, 0.36);
+    
   label_ = gtk_label_new (obj_->get_label().c_str());
   gtk_frame_set_label_widget (GTK_FRAME (frame_), label_);
   gtk_misc_set_alignment (GTK_MISC (label_), 0, 0);
   
-  align_ = gtk_alignment_new (0, 0, 1, 1);
+  align_ = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_container_add (GTK_CONTAINER (frame_), align_);
+  gtk_widget_set_size_request(align_, 44, 56);
   
   fixed_ = gtk_fixed_new ();
   gtk_container_add (GTK_CONTAINER (align_), fixed_);
+  gtk_widget_set_size_request(fixed_, 44, 56);
   
-  /*   first column   */
-  gint im_shift = 4;
-  bitState_ = gtk_image_new_from_file(UIPATH"bs1_grey.png");
-  gtk_fixed_put (GTK_FIXED (fixed), bitState_, col1, row);
-  gtk_misc_set_alignment (GTK_MISC (bitState_), alignVal, alignVal);
-  gtk_widget_set_size_request (bitState_, usize, usize + im_shift);
+  /* bit state image */
+  bitState_ = gtk_image_new_from_file("../resources/bs1_grey.png");
+  gtk_fixed_put (GTK_FIXED(fixed_), bitState_, 0, 0);
+  gtk_misc_set_alignment(GTK_MISC(bitState_), alignVal, alignVal);
+  gtk_widget_set_size_request(bitState_, usize, usize);
   
   g_timeout_add(200, (GSourceFunc) time_handler, (gpointer) this);
   gtk_signal_connect (GTK_OBJECT (pWin_->mainWindow), "delete_event", GTK_SIGNAL_FUNC (delete_event), (gpointer)this);
+  
   time_handler(this);
 }
 

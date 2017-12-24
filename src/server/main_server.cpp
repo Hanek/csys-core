@@ -24,6 +24,7 @@ int main()
   dI di2("di2", 1);
   dI di3("di3", 0);
   dI di4("di4", 1);
+  dI di22("di22", 0);
   
 
   
